@@ -20,16 +20,24 @@ defmodule Mix.Tasks.InsertTest do
   end
 
   defp insert(count) do
-    for _i <- 1..count,
-        do:
-          [
+    data =
+      for i <- 1..100,
+          do: [
             %{"index" => %{"_index" => "test"}},
-            %{"test" => "test"}
+            %{"test#{rem(i, 999)}" => "test#{i}"}
           ]
-          |> List.flatten()
-          |> Elastic.bulk_upload(
-            ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
-            &IO.inspect/1
-          )
+
+    1..count
+    |> Enum.map(fn _ ->
+      Task.async(fn ->
+        Elastic.bulk_upload(
+          data |> List.flatten(),
+          ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
+          &IO.inspect/1,
+          &IO.inspect("***ERROR***\n#{inspect(&1)}***ERROR***\n\n")
+        )
+      end)
+    end)
+    |> Enum.map(fn task -> Task.await(task) end)
   end
 end
