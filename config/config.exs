@@ -26,5 +26,19 @@ use Mix.Config
 # by uncommenting the line below and defining dev.exs, test.exs and such.
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
-#
+
+config :elasticsearch_elixir_bulk_processor,
+       ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
+       # The URL where Elasticsearch is hosted on your system
+       url: "http://localhost:9200",
+
+       # If you want to mock the responses of the Elasticsearch JSON API
+       # for testing or other purposes, you can inject a different module
+       # here. It must implement the Elasticsearch.API behaviour.
+       api: Elasticsearch.API.HTTP,
+
+       # Customize the library used for JSON encoding/decoding.
+       # or Jason
+       json_library: Poison
+
 #     import_config "#{Mix.env()}.exs"
