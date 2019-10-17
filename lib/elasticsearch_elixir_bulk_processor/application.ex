@@ -10,7 +10,9 @@ defmodule ElasticsearchElixirBulkProcessor.Application do
     children = [
       # Starts a worker by calling: ElasticsearchElixirBulkProcessor.Worker.start_link(arg)
       # {ElasticsearchElixirBulkProcessor.Worker, arg}
-      ElasticsearchElixirBulkProcessor.ElasticsearchCluster
+      ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
+      ElasticsearchElixirBulkProcessor.Bulk.Queue,
+      ElasticsearchElixirBulkProcessor.Bulk.Bulk
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -1,22 +1,25 @@
 defmodule ElasticsearchElixirBulkProcessor.Bulk.Queue do
   use GenStage
 
-  def start_link() do
+  def start_link(_) do
     GenStage.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
-  def init(state) do
-    {:producer_consumer, state}
+  def init(_) do
+    {:producer_consumer, []}
   end
 
-   def handle_events(events, _from, state) do
-    # Wait for a second.
-    Process.sleep(1000)
+  def push(message) do
+    GenStage.cast(__MODULE__, message)
+  end
 
-    # Inspect the events.
-    IO.inspect(events)
-
+  def handle_cast(event, state) do
     # We are a consumer, so we would never emit items.
-    {:noreply, [], state}
+    {:noreply, [], state ++ [event]}
+  end
+
+  def handle_events(events, _from, number) do
+    IO.inspect(events)
+    {:noreply, events, number}
   end
 end
