@@ -6,20 +6,26 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Queue do
   end
 
   def init(_) do
-    {:producer_consumer, []}
+    {:producer, []}
   end
 
-  def push(message) do
-    GenStage.cast(__MODULE__, message)
+  def push(event) do
+    GenStage.cast(__MODULE__, event)
   end
 
-  def handle_cast(event, state) do
-    # We are a consumer, so we would never emit items.
-    {:noreply, [], state ++ [event]}
+  def handle_cast(request, state) do
+    {:noreply, [], state ++ [request]}
   end
 
-  def handle_events(events, _from, number) do
-    IO.inspect(events)
-    {:noreply, events, number}
+  def handle_demand(demand, state) when demand > 0 do
+    IO.inspect(demand, label: "handle_demand")
+
+    events =
+      for i <-
+            0..(demand - 1) do
+        "test#{i}"
+      end ++ state
+
+    {:noreply, events, []}
   end
 end
