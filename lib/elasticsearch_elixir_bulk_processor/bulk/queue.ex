@@ -5,27 +5,19 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Queue do
     GenStage.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
-  def init(_) do
+  def init(:ok) do
     {:producer, []}
   end
 
-  def push(event) do
-    GenStage.cast(__MODULE__, event)
+  def handle_info(_, state), do: {:noreply, [], state}
+
+  def add(events), do: GenServer.cast(__MODULE__, {:add, events})
+
+  def handle_cast({:add, events}, state) when is_list(events) do
+    {:noreply, events, state}
   end
 
-  def handle_cast(request, state) do
-    {:noreply, [], state ++ [request]}
-  end
+  def handle_cast({:add, events}, state), do: {:noreply, [events], state}
 
-  def handle_demand(demand, state) when demand > 0 do
-    IO.inspect(demand, label: "handle_demand")
-
-    events =
-      for i <-
-            0..(demand - 1) do
-        "test#{i}"
-      end ++ state
-
-    {:noreply, events, []}
-  end
+  def handle_demand(_, state), do: {:noreply, [], state}
 end
