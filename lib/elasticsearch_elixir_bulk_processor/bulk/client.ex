@@ -1,4 +1,4 @@
-defmodule ElasticsearchElixirBulkProcessor.Bulk.Elastic do
+defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
   @spec bulk_upload(list, Elasticsearch.Cluster.t(), fun, fun) :: Task.t()
   def bulk_upload(data, cluster, success_fun \\ & &1, error_fun \\ & &1)
       when is_list(data) and

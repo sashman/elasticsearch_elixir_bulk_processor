@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.InsertTest do
   use Mix.Task
-  alias ElasticsearchElixirBulkProcessor.Bulk.Elastic
+  alias ElasticsearchElixirBulkProcessor.Bulk.Client
 
   @shortdoc "Test insertion using Bulk module"
   def run([count]) do
@@ -30,7 +30,7 @@ defmodule Mix.Tasks.InsertTest do
     1..count
     |> Enum.map(fn _ ->
       Task.async(fn ->
-        Elastic.bulk_upload(
+        Client.bulk_upload(
           data |> List.flatten(),
           ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
           &IO.inspect/1,
