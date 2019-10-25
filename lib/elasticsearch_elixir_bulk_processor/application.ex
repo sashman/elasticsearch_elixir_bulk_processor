@@ -11,8 +11,8 @@ defmodule ElasticsearchElixirBulkProcessor.Application do
       # Starts a worker by calling: ElasticsearchElixirBulkProcessor.Worker.start_link(arg)
       # {ElasticsearchElixirBulkProcessor.Worker, arg}
       ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
-      ElasticsearchElixirBulkProcessor.Bulk.Queue,
-      ElasticsearchElixirBulkProcessor.Bulk.Bulk
+      ElasticsearchElixirBulkProcessor.Bulk.QueueStage,
+      ElasticsearchElixirBulkProcessor.Bulk.BulkStage
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -1,4 +1,4 @@
-defmodule ElasticsearchElixirBulkProcessor.Bulk.Queue do
+defmodule ElasticsearchElixirBulkProcessor.Bulk.QueueStage do
   use GenStage
 
   def start_link(_) do
