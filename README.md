@@ -2,7 +2,7 @@
 
 Port of the [Java bulk processor](https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-docs-bulk-processor.html)
 
-**TODO: Add description**
+**Under construction!**
 
 ## Installation
 
