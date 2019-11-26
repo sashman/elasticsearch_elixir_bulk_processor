@@ -25,6 +25,8 @@ defmodule Mix.Tasks.InsertTest do
       wait_until_doc_count(count * per_bulk, base_line_doc_total)
     end)
     |> IO.inspect()
+
+    delete_index()
   end
 
   defp insert(count, per_bulk) do
@@ -32,7 +34,7 @@ defmodule Mix.Tasks.InsertTest do
     |> Enum.each(fn _ ->
       index_item("test", index_payload())
       |> List.duplicate(per_bulk)
-      |> Bulk.DirectUpload.add_requests()
+      |> Bulk.Upload.add_requests()
     end)
   end
 
@@ -94,5 +96,10 @@ defmodule Mix.Tasks.InsertTest do
       {:ok, %{"hits" => %{"total" => %{"value" => total}}}} -> total
       _ -> 0
     end
+  end
+
+  defp delete_index do
+    ElasticsearchElixirBulkProcessor.ElasticsearchCluster
+    |> Elasticsearch.delete("test")
   end
 end
