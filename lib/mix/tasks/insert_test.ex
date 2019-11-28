@@ -27,9 +27,12 @@ defmodule Mix.Tasks.InsertTest do
       |> insert(per_bulk, upload_module)
     end)
 
-    :timer.tc(fn ->
-      wait_until_doc_count(count * per_bulk, base_line_doc_total)
-    end)
+    {time, {:ok}} =
+      :timer.tc(fn ->
+        wait_until_doc_count(count * per_bulk, base_line_doc_total)
+      end)
+
+    (time / 1000)
     |> IO.inspect()
 
     delete_index()
