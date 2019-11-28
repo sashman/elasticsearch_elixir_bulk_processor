@@ -3,7 +3,7 @@ defmodule Mix.Tasks.InsertTest do
   alias ElasticsearchElixirBulkProcessor.{Bulk, Items}
 
   @shortdoc "Test insertion using Bulk module"
-  def run([count, per_bulk]) do
+  def run([count, per_bulk, method]) when method in ["direct", "staged"] do
     {:ok, _started} = Application.ensure_all_started(:elasticsearch_elixir_bulk_processor)
 
     {count, _} =
@@ -16,9 +16,15 @@ defmodule Mix.Tasks.InsertTest do
 
     base_line_doc_total = count_current_docs()
 
+    upload_module =
+      case method do
+        "direct" -> Bulk.DirectUpload
+        "staged" -> Bulk.Upload
+      end
+
     Task.async(fn ->
       count
-      |> insert(per_bulk)
+      |> insert(per_bulk, upload_module)
     end)
 
     :timer.tc(fn ->
@@ -29,12 +35,12 @@ defmodule Mix.Tasks.InsertTest do
     delete_index()
   end
 
-  defp insert(count, per_bulk) do
+  defp insert(count, per_bulk, upload_module) do
     1..count
     |> Enum.each(fn _ ->
       index_item("test", index_payload())
       |> List.duplicate(per_bulk)
-      |> Bulk.Upload.add_requests()
+      |> upload_module.add_requests()
     end)
   end
 

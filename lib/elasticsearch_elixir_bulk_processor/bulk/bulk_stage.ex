@@ -1,6 +1,6 @@
 defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
   use GenStage
-  alias ElasticsearchElixirBulkProcessor.Bulk.QueueStage
+  alias ElasticsearchElixirBulkProcessor.Bulk.{QueueStage, Client}
 
   def start_link(_) do
     GenStage.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -11,8 +11,15 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
   end
 
   def handle_events(events, _from, state) when is_list(events) and length(events) > 0 do
-    Process.sleep(500)
-    IO.inspect(events, label: "consumer events")
+    # Process.sleep(500)
+    # IO.inspect(events, label: "consumer events")
+    events
+    |> Enum.join("\n")
+    |> Client.bulk_upload(
+      ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
+      & &1,
+      &IO.inspect/1
+    )
 
     {:noreply, [], state}
   end
