@@ -39,6 +39,10 @@ config :elasticsearch_elixir_bulk_processor,
 
        # Customize the library used for JSON encoding/decoding.
        # or Jason
-       json_library: Poison
+       json_library: Poison,
+       default_options: [
+         timeout: 15_000,
+         recv_timeout: 15_000
+       ]
 
 #     import_config "#{Mix.env()}.exs"

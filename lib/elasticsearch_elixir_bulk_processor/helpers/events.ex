@@ -20,7 +20,7 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.Events do
     )
   end
 
-  def build_up_elements(element, {first, rest}, first_byte_size) when is_binary(element) do
+  defp build_up_elements(element, {first, rest}, first_byte_size) when is_binary(element) do
     if first |> byte_sum >= first_byte_size do
       {first, rest ++ [element]}
     else
