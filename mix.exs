@@ -24,7 +24,8 @@ defmodule ElasticsearchElixirBulkProcessor.MixProject do
     [
       {:elasticsearch, "~> 1.0.0"},
       {:poison, "~> 3.1"},
-      {:gen_stage, "~> 0.14"}
+      {:gen_stage, "~> 0.14"},
+      {:size, "~> 0.1.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
