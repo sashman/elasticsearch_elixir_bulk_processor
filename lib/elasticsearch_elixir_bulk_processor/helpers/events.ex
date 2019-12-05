@@ -1,5 +1,5 @@
 defmodule ElasticsearchElixirBulkProcessor.Helpers.Events do
-  def byte_sum(string_list), do: Enum.map(string_list, &byte_size/1) |> Enum.sum()
+  def byte_sum(string_list), do: Stream.map(string_list, &byte_size/1) |> Enum.sum()
 
   @doc ~S"""
 

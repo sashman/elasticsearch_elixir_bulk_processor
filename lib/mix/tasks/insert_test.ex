@@ -27,13 +27,16 @@ defmodule Mix.Tasks.InsertTest do
       |> insert(per_bulk, upload_module)
     end)
 
-    {time, {:ok}} =
-      :timer.tc(fn ->
-        wait_until_doc_count(count * per_bulk, base_line_doc_total)
-      end)
+    :timer.tc(fn ->
+      wait_until_doc_count(count * per_bulk, base_line_doc_total)
+    end)
+    |> case do
+      {time, {:ok}} ->
+        IO.inspect("#{count} #{per_bulk} #{time / 1000}")
 
-    (time / 1000)
-    |> IO.inspect()
+      _ ->
+        nil
+    end
 
     delete_index()
   end
@@ -78,7 +81,7 @@ defmodule Mix.Tasks.InsertTest do
   end
 
   defp wait_until_doc_count(doc_count, base_line, state \\ %{})
-  defp wait_until_doc_count(_, _, %{retry: 360}), do: {:error, :timeout}
+  defp wait_until_doc_count(_, _, %{retry: 3600}), do: {:error, :timeout}
 
   defp wait_until_doc_count(doc_count, base_line, state) do
     cond do
