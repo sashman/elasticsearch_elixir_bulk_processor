@@ -9,6 +9,8 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
   @byte_threshold 62_914_560
   # @byte_threshold 104_857_600
 
+  @log false
+
   def start_link(_) do
     GenStage.start_link(__MODULE__, :ok, name: __MODULE__)
   end
@@ -36,11 +38,13 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
         )
       end)
 
-    IO.inspect(
-      "events: #{to_send |> length} size: #{Size.humanize!(bytes_sent)}  took: #{time / 1_000_000}s  b/s: #{
-        (bytes_sent / (time / 1_000_000)) |> round |> Size.humanize!()
-      }"
-    )
+    if @log do
+      IO.inspect(
+        "events: #{to_send |> length} size: #{Size.humanize!(bytes_sent)}  took: #{
+          time / 1_000_000
+        }s  b/s: #{(bytes_sent / (time / 1_000_000)) |> round |> Size.humanize!()}"
+      )
+    end
 
     QueueStage.add(rest)
     {:noreply, [], state}
