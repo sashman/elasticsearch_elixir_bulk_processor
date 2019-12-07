@@ -8,7 +8,13 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.Events do
     iex> ElasticsearchElixirBulkProcessor.Helpers.Events.byte_sum(["abcd", "a", "b"])
     6
 
+    iex> ElasticsearchElixirBulkProcessor.Helpers.Events.byte_sum([])
+    0
+
   """
+  def byte_sum([]),
+    do: 0
+
   def byte_sum(string_list) when is_list(string_list),
     do: Stream.map(string_list, &byte_size/1) |> Enum.sum()
 
