@@ -1,5 +1,16 @@
 defmodule ElasticsearchElixirBulkProcessor.Helpers.Events do
-  def byte_sum(string_list), do: Stream.map(string_list, &byte_size/1) |> Enum.sum()
+  @doc ~S"""
+
+  Return the size of the string in bytes
+
+  ## Examples
+
+    iex> ElasticsearchElixirBulkProcessor.Helpers.Events.byte_sum(["abcd", "a", "b"])
+    6
+
+  """
+  def byte_sum(string_list) when is_list(string_list),
+    do: Stream.map(string_list, &byte_size/1) |> Enum.sum()
 
   @doc ~S"""
 
