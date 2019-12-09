@@ -1,3 +1,4 @@
+# coveralls-ignore-start
 defmodule Mix.Tasks.InsertTest do
   use Mix.Task
   alias ElasticsearchElixirBulkProcessor.{Bulk, Items, Helpers}
@@ -80,3 +81,5 @@ defmodule Mix.Tasks.InsertTest do
     |> Enum.random()
   end
 end
+
+# coveralls-ignore-stop

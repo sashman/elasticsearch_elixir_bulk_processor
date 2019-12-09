@@ -1,3 +1,4 @@
+# coveralls-ignore-start
 defmodule Randomizer do
   @moduledoc """
   Random string generator module.
@@ -43,3 +44,5 @@ defmodule Randomizer do
     |> Enum.join("")
   end
 end
+
+# coveralls-ignore-stop
