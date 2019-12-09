@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.InsertTest do
   use Mix.Task
-  alias ElasticsearchElixirBulkProcessor.{Bulk, Items}
+  alias ElasticsearchElixirBulkProcessor.{Bulk, Items, Helpers}
 
   @shortdoc "Test insertion using Bulk module"
   def run([count, per_bulk, method]) when method in ["direct", "staged"] do
@@ -14,7 +14,7 @@ defmodule Mix.Tasks.InsertTest do
       per_bulk
       |> Integer.parse()
 
-    base_line_doc_total = count_current_docs()
+    base_line_doc_total = Helpers.Elasticsearch.count_current_docs()
 
     upload_module =
       case method do
@@ -28,7 +28,7 @@ defmodule Mix.Tasks.InsertTest do
     end)
 
     :timer.tc(fn ->
-      wait_until_doc_count(count * per_bulk, base_line_doc_total)
+      Helpers.Elasticsearch.wait_until_doc_count(count * per_bulk, base_line_doc_total)
     end)
     |> case do
       {time, {:ok}} ->
@@ -38,7 +38,7 @@ defmodule Mix.Tasks.InsertTest do
         nil
     end
 
-    delete_index()
+    Helpers.Elasticsearch.delete_index()
   end
 
   defp insert(count, per_bulk, upload_module) do
@@ -78,40 +78,5 @@ defmodule Mix.Tasks.InsertTest do
       "SOMETHING ELSE"
     ]
     |> Enum.random()
-  end
-
-  defp wait_until_doc_count(doc_count, base_line, state \\ %{})
-  defp wait_until_doc_count(_, _, %{retry: 3600}), do: {:error, :timeout}
-
-  defp wait_until_doc_count(doc_count, base_line, state) do
-    cond do
-      doc_count + base_line == count_current_docs() ->
-        {:ok}
-
-      true ->
-        state[:retry]
-        |> case do
-          nil ->
-            wait_until_doc_count(doc_count, base_line, %{retry: 0})
-
-          retry ->
-            :timer.sleep(1000)
-            wait_until_doc_count(doc_count, base_line, %{retry: retry + 1})
-        end
-    end
-  end
-
-  defp count_current_docs do
-    ElasticsearchElixirBulkProcessor.ElasticsearchCluster
-    |> Elasticsearch.post("test/_search?track_total_hits=true", %{size: 0})
-    |> case do
-      {:ok, %{"hits" => %{"total" => %{"value" => total}}}} -> total
-      _ -> 0
-    end
-  end
-
-  defp delete_index do
-    ElasticsearchElixirBulkProcessor.ElasticsearchCluster
-    |> Elasticsearch.delete("test")
   end
 end
