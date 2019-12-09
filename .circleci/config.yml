@@ -7,6 +7,8 @@ jobs: # basic units of work in a run
         environment: # environment variables for primary container
           MIX_ENV: test
       - image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+        environment:
+          discovery.type: single-node
 
     working_directory: ~/app # directory where steps will run
 
