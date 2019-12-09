@@ -1,5 +1,7 @@
 # ElasticsearchElixirBulkProcessor
 
+[![Coverage Status](https://coveralls.io/repos/github/sashman/elasticsearch_elixir_bulk_processor/badge.svg?branch=master)](https://coveralls.io/github/sashman/elasticsearch_elixir_bulk_processor?branch=master)
+
 Port of the [Java bulk processor](https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-docs-bulk-processor.html)
 
 **Under construction!**
@@ -37,5 +39,5 @@ Run test:
 mix insert_test <INSERT_COUNT> <BULK_SIZE> staged|direct
 ```
 
-* `staged` - uses a GenStage mechanism to aggregate and insert.
-* `direct` - iterates and inserts bulk sequentially as given.
+- `staged` - uses a GenStage mechanism to aggregate and insert.
+- `direct` - iterates and inserts bulk sequentially as given.
