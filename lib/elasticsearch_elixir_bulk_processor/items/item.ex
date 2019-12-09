@@ -1,3 +1,4 @@
 defmodule ElasticsearchElixirBulkProcessor.Items.Item do
-  @callback to_payload(ElasticsearchElixirBulkProcessor.Items.Item.t()) :: String.t()
+  @type item :: __MODULE__
+  @callback to_payload(item) :: String.t()
 end
