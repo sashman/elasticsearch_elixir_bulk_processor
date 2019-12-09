@@ -3,11 +3,8 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
   alias ElasticsearchElixirBulkProcessor.Bulk.{QueueStage, Client}
   alias ElasticsearchElixirBulkProcessor.Helpers.Events
 
-  # @byte_threshold 15_728_640
-  # @byte_threshold 31_457_280
-  # @byte_threshold 47_185_920
+  # 60mb
   @byte_threshold 62_914_560
-  # @byte_threshold 104_857_600
 
   @log false
 

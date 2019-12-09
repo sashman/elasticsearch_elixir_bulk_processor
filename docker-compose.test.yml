@@ -1,0 +1,10 @@
+version: "3.2"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    environment:
+      discovery.type: single-node
+      thread_pool.write.queue_size: 1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
