@@ -19,11 +19,13 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.UploadTest do
 
     setup do
       Helpers.Elasticsearch.delete_index()
+
+      :ok
     end
 
     test "uploads data to elasticsearch" do
       Bulk.Upload.add_requests([index_item()])
-      :timer.sleep(5000)
+      :timer.sleep(1000)
       _result = Helpers.Elasticsearch.query(item_query())
 
       assert _result = %{"hits" => %{"hits" => [%{"my_string" => "test"}]}}
