@@ -4,7 +4,9 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
   alias ElasticsearchElixirBulkProcessor.Helpers.Events
 
   # 60mb
-  @byte_threshold 62_914_560
+  @default_byte_threshold 62_914_560
+
+  @init_state %{queue: [], byte_threshold: @default_byte_threshold}
 
   @log false
 
@@ -13,11 +15,18 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
   end
 
   def init(_) do
-    {:consumer, %{queue: []}, subscribe_to: [{QueueStage, min_demand: 5, max_demand: 75}]}
+    {:consumer, @init_state, subscribe_to: [{QueueStage, min_demand: 5, max_demand: 75}]}
   end
 
+  def set_byte_threshold(byte_threshold) when is_integer(byte_threshold) do
+    GenServer.cast(__MODULE__, {:set_byte_threshold, byte_threshold})
+  end
+
+  def handle_cast({:set_byte_threshold, byte_threshold}, state),
+    do: {:noreply, [], %{state | byte_threshold: byte_threshold}}
+
   def handle_events(events, _from, state) when is_list(events) and length(events) > 0 do
-    {to_send, rest} = Events.split_first_bytes(state.queue ++ events, @byte_threshold)
+    {to_send, rest} = Events.split_first_bytes(state.queue ++ events, state.byte_threshold)
 
     bytes_sent = to_send |> Events.byte_sum()
 
