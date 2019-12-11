@@ -6,7 +6,7 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
   # 60mb
   @default_byte_threshold 62_914_560
 
-  @init_state %{queue: [], byte_threshold: @default_byte_threshold}
+  @init_state %{queue: [], byte_threshold: @default_byte_threshold, preserve_event_order: false}
 
   @log false
 
@@ -15,7 +15,11 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
   end
 
   def init(_) do
-    {:consumer, @init_state, subscribe_to: [{QueueStage, min_demand: 5, max_demand: 75}]}
+    preserve_event_order =
+      Application.get_env(:elasticsearch_elixir_bulk_processor, :preserve_event_order)
+
+    {:consumer, %{@init_state | preserve_event_order: preserve_event_order},
+     subscribe_to: [{QueueStage, min_demand: 5, max_demand: 75}]}
   end
 
   def set_byte_threshold(byte_threshold) when is_integer(byte_threshold) do
@@ -28,33 +32,44 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
   def handle_events(events, _from, state) when is_list(events) and length(events) > 0 do
     {to_send, rest} = Events.split_first_bytes(state.queue ++ events, state.byte_threshold)
 
-    bytes_sent = to_send |> Events.byte_sum()
-
-    payload = to_send |> Enum.join("\n")
-
-    {time, _} =
-      :timer.tc(fn ->
-        payload
-        |> Client.bulk_upload(
-          ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
-          & &1,
-          fn error ->
-            IO.inspect("Error: #{inspect(error.error)}")
-          end
-        )
-      end)
-
-    if @log do
-      IO.inspect(
-        "events: #{to_send |> length} size: #{Size.humanize!(bytes_sent)}  took: #{
-          time / 1_000_000
-        }s  b/s: #{(bytes_sent / (time / 1_000_000)) |> round |> Size.humanize!()}"
-      )
-    end
+    to_send
+    |> send_payload(& &1, &default_error_fun/1)
+    |> log(to_send)
 
     QueueStage.add(rest)
     {:noreply, [], state}
   end
 
   def handle_events(_events, _from, state), do: {:noreply, [], state}
+
+  defp send_payload(payload_to_send, sucess_fun, error_fun) do
+    {time, _} =
+      :timer.tc(fn ->
+        payload_to_send
+        |> Enum.join("\n")
+        |> Client.bulk_upload(
+          ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
+          sucess_fun,
+          error_fun
+        )
+      end)
+
+    time
+  end
+
+  defp default_error_fun(error) do
+    IO.inspect("Error: #{inspect(error.error)}")
+  end
+
+  defp log(time, to_send) do
+    if @log do
+      bytes_sent = to_send |> Events.byte_sum()
+
+      IO.inspect(
+        "events: #{to_send |> length} size: #{Size.humanize!(bytes_sent)}  took: #{
+          time / 1_000_000
+        }s  b/s: #{(bytes_sent / (time / 1_000_000)) |> round |> Size.humanize!()}"
+      )
+    end
+  end
 end
