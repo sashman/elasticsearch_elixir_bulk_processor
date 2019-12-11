@@ -11,7 +11,7 @@ defmodule ElasticsearchElixirBulkProcessor do
   ## Examples
 
       iex> ElasticsearchElixirBulkProcessor.set_byte_threshold(10)
-      :world
+      :ok
 
   """
   def set_byte_threshold(bytes) do
