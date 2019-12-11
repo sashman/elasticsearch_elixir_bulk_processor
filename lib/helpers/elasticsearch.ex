@@ -1,3 +1,4 @@
+# coveralls-ignore-start
 defmodule ElasticsearchElixirBulkProcessor.Helpers.Elasticsearch do
   def wait_until_doc_count(doc_count, base_line, state \\ %{})
   def wait_until_doc_count(_, _, %{retry: 3600}), do: {:error, :timeout}
@@ -42,3 +43,5 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.Elasticsearch do
     |> Elasticsearch.delete("test")
   end
 end
+
+# coveralls-ignore-stop
