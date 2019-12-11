@@ -9,8 +9,6 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.QueueStage do
     {:producer, []}
   end
 
-  def handle_info(_, state), do: {:noreply, [], state}
-
   def add(events), do: GenServer.cast(__MODULE__, {:add, events})
 
   def handle_cast({:add, events}, state) when is_list(events) do
