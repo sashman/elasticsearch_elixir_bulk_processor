@@ -1,8 +1,8 @@
 defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStageTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   import Mock
 
-  alias ElasticsearchElixirBulkProcessor.Bulk.{Client, QueueStage}
+  alias ElasticsearchElixirBulkProcessor.Bulk.{Client, QueueStage, BulkStage}
 
   describe ".set_byte_threshold" do
     test "persists the threshold value" do
@@ -15,6 +15,31 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStageTest do
 
         :timer.sleep(100)
         assert_called(Client.bulk_upload("0\n1\n2\n3\n4\n5\n6\n7\n8\n9", :_, :_, :_))
+      end
+    end
+  end
+
+  describe ".set_byte_threshold when preserve_event_order is true" do
+    setup do
+      BulkStage.set_preserve_event_order(true)
+
+      on_exit(fn ->
+        BulkStage.set_preserve_event_order(false)
+      end)
+    end
+
+    test "events are sent in order" do
+      payload = ~w(00 11 22 33 44 5 6 7 8 9 a b c d e f)
+
+      assert ElasticsearchElixirBulkProcessor.set_byte_threshold(3) == :ok
+
+      with_mock Client, bulk_upload: fn _, _, _, _ -> :ok end do
+        QueueStage.add(payload)
+
+        :timer.sleep(100)
+        assert_called(Client.bulk_upload("00\n11", :_, :_, :_))
+        assert_called(Client.bulk_upload("44\n5", :_, :_, :_))
+        assert_called(Client.bulk_upload("22\n33", :_, :_, :_))
       end
     end
   end

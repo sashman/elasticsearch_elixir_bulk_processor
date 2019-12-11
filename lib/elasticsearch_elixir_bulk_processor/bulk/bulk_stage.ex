@@ -30,8 +30,15 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
     GenServer.cast(__MODULE__, {:set_byte_threshold, byte_threshold})
   end
 
+  def set_preserve_event_order(preserve_event_order) when is_boolean(preserve_event_order) do
+    GenServer.cast(__MODULE__, {:set_preserve_event_order, preserve_event_order})
+  end
+
   def handle_cast({:set_byte_threshold, byte_threshold}, state),
     do: {:noreply, [], %{state | byte_threshold: byte_threshold}}
+
+  def handle_cast({:set_preserve_event_order, preserve_event_order}, state),
+    do: {:noreply, [], %{state | preserve_event_order: preserve_event_order}}
 
   def handle_events(events, _from, state) when is_list(events) and length(events) > 0 do
     events
@@ -65,6 +72,13 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
     {to_send, rest} = Events.split_first_bytes(events, state.byte_threshold)
     send_fun.(to_send)
     QueueStage.add(rest)
+  end
+
+  defp manage_payload(events, state, send_fun) do
+    Events.chunk_bytes(events, state.byte_threshold)
+    |> Enum.map(fn chunk ->
+      send_fun.(chunk)
+    end)
   end
 
   defp default_error_fun(error) do
