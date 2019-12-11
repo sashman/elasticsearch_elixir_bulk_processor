@@ -3,12 +3,16 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
   alias ElasticsearchElixirBulkProcessor.Bulk.{QueueStage, Client}
   alias ElasticsearchElixirBulkProcessor.Helpers.Events
 
+  @log false
+
   # 60mb
   @default_byte_threshold 62_914_560
 
-  @init_state %{queue: [], byte_threshold: @default_byte_threshold, preserve_event_order: false}
-
-  @log false
+  @init_state %{
+    queue: [],
+    byte_threshold: @default_byte_threshold,
+    preserve_event_order: false
+  }
 
   def start_link(_) do
     GenStage.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -30,13 +34,13 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
     do: {:noreply, [], %{state | byte_threshold: byte_threshold}}
 
   def handle_events(events, _from, state) when is_list(events) and length(events) > 0 do
-    {to_send, rest} = Events.split_first_bytes(state.queue ++ events, state.byte_threshold)
+    events
+    |> manage_payload(state, fn to_send ->
+      to_send
+      |> send_payload(& &1, &default_error_fun/1)
+      |> log(to_send)
+    end)
 
-    to_send
-    |> send_payload(& &1, &default_error_fun/1)
-    |> log(to_send)
-
-    QueueStage.add(rest)
     {:noreply, [], state}
   end
 
@@ -55,6 +59,12 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
       end)
 
     time
+  end
+
+  defp manage_payload(events, state = %{preserve_event_order: false}, send_fun) do
+    {to_send, rest} = Events.split_first_bytes(events, state.byte_threshold)
+    send_fun.(to_send)
+    QueueStage.add(rest)
   end
 
   defp default_error_fun(error) do
