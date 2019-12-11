@@ -5,7 +5,6 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStageTest do
   alias ElasticsearchElixirBulkProcessor.Bulk.{Client, QueueStage}
 
   describe ".set_byte_threshold" do
-    @tag :me
     test "persists the threshold value" do
       payload = ~w(0 1 2 3 4 5 6 7 8 9 a b c d e f)
 

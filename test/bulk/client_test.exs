@@ -9,7 +9,6 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.ClientTest do
     end
   end
 
-  @tag :me
   describe ".bulk_upload" do
     test "calls error function when there is 1 error" do
       with_mock Elasticsearch,
