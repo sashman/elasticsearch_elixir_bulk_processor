@@ -28,7 +28,6 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStageTest do
       end)
     end
 
-    @tag :me
     test "events are sent in order" do
       payload = ~w(00 11 22 33 44 5 6 7 8 9 a b c d e f)
 
