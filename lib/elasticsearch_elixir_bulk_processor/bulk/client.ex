@@ -7,6 +7,16 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
 
     Elasticsearch.post(cluster, "/_bulk", data)
     |> handle_error(success_fun, error_fun, data)
+
+    # TODO
+    # retry with: constant_backoff(100) |> Stream.take(5) do
+    #   Elasticsearch.post(cluster, "/_bulk", data)
+    # after
+    #   result -> result
+    # else
+    #   error -> error
+    # end
+    # |> handle_error(success_fun, error_fun, data)
   end
 
   defp handle_error({:error, error}, _, error_fun, data),
