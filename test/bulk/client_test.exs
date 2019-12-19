@@ -33,10 +33,20 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.ClientTest do
 
     test "calls error function when there is multiple errors" do
       with_mock Elasticsearch,
-        post: fn _, _, _ -> {:ok, %{"errors" => true, "items" => ["one", "two", "three"]}} end do
+        post: fn _, _, _ ->
+          {:ok,
+           %{
+             "errors" => true,
+             "items" => [
+               %{"index" => %{"error" => %{}}},
+               %{"update" => %{"error" => %{}}},
+               %{"create" => %{"error" => %{}}}
+             ]
+           }}
+        end do
         with_mock FunctionStub2, error_fun: fn _ -> :ok end do
           Client.bulk_upload(
-            "",
+            "one\ntwo\nthree",
             ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
             & &1,
             &FunctionStub2.error_fun/1

@@ -1,4 +1,6 @@
 defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
+  alias ElasticsearchElixirBulkProcessor.Helpers.BulkResponse
+
   def bulk_upload(data, cluster, success_fun \\ & &1, error_fun \\ & &1)
       when is_binary(data) and
              is_function(success_fun) and
@@ -22,9 +24,10 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
   defp handle_error({:error, error}, _, error_fun, data),
     do: error_fun.(%{error: error, data: data})
 
-  defp handle_error({:ok, %{"errors" => true, "items" => items}}, _, error_fun, _)
+  defp handle_error({:ok, %{"errors" => true, "items" => items}}, _, error_fun, data)
        when is_function(error_fun) do
-    parallel_map(items, error_fun)
+    BulkResponse.gather_error_items(items, data)
+    |> parallel_map(error_fun)
   end
 
   defp handle_error({:ok, _} = res, success_fun, _, _), do: success_fun.(res)

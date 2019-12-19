@@ -10,6 +10,11 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.BulkResponse do
     ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.gather_error_items(items, data)
     ["item_with_errors"]
 
+    iex> items = [%{"index" => %{"error" => %{}}}, %{"update" => %{"error" => %{}}}, %{"create" => %{"error" => %{}}}, %{"delete" => %{"error" => %{}}}]
+    ...> data = ["item1", "item2", "item3", "item4"]
+    ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.gather_error_items(items, data)
+    ["item1", "item2", "item3", "item4"]
+
   """
   def gather_error_items(items, data) when is_list(data) do
     data
