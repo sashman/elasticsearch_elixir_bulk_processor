@@ -48,4 +48,29 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.BulkResponse do
 
     gather_error_items(items, data_list)
   end
+
+  @doc ~S"""
+
+  Given a list of items return true if all have an error.
+
+  ## Examples
+
+    iex> items = [%{"index" => %{"error" => %{}}}, %{"update" => %{"error" => %{}}}, %{"create" => %{"error" => %{}}}, %{"delete" => %{"error" => %{}}}]
+    ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.all_items_error(items)
+    true
+
+    iex> items = [%{"index" => %{}}, %{"update" => %{"error" => %{}}}, %{"create" => %{}}, %{"delete" => %{}}]
+    ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.all_items_error(items)
+    false
+
+  """
+  def all_items_error(items),
+    do:
+      Enum.all?(items, fn
+        %{"index" => %{"error" => _}} -> true
+        %{"update" => %{"error" => _}} -> true
+        %{"create" => %{"error" => _}} -> true
+        %{"delete" => %{"error" => _}} -> true
+        _ -> false
+      end)
 end
