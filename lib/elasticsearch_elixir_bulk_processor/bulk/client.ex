@@ -23,8 +23,9 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
     do: error_fun.(%{error: error, data: data})
 
   defp handle_error({:ok, %{"errors" => true, "items" => items}}, _, error_fun, _)
-       when is_function(error_fun),
-       do: parallel_map(items, error_fun)
+       when is_function(error_fun) do
+    parallel_map(items, error_fun)
+  end
 
   defp handle_error({:ok, _} = res, success_fun, _, _), do: success_fun.(res)
 

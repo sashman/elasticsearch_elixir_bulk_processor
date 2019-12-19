@@ -1,34 +1,12 @@
 defmodule ElasticsearchElixirBulkProcessor.Helpers.BulkResponse do
   @doc ~S"""
 
-  Given a list of items from a bulk response and the data sent as a string payload return the items that match the error.
-
-  ## Examples
-
-    iex>
-    ...> items = [%{"index" => %{}}}, %{"index" => %{"error" => _}}}, %{"index" => %{}}}]
-    ...> data = "item\nitem_with_errors\nitem"
-    ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.gather_error_items(items, data)
-    ["item_with_errors"]
-
-  """
-  def gather_error_items(items, data) when is_binary(data) do
-    gather_error_items(
-      items,
-      data
-      |> String.split("\n")
-    )
-  end
-
-  @doc ~S"""
-
   Given a list of items from a bulk response and the data sent as a list of requests return the items that match the error.
 
   ## Examples
 
-    iex>
-    ...> items = [%{"index" => %{}}}, %{"index" => %{"error" => _}}}, %{"index" => %{}}}]
-    ...> data = ["item", "item_with_errors", "item"]
+    iex> items = [%{"index" => %{}}, %{"update" => %{"error" => %{}}}, %{"create" => %{}}, %{"delete" => %{}}]
+    ...> data = ["item", "item_with_errors", "item", "item"]
     ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.gather_error_items(items, data)
     ["item_with_errors"]
 
@@ -44,5 +22,25 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.BulkResponse do
       {_, _} -> false
     end)
     |> Enum.map(fn {data, _} -> data end)
+  end
+
+  @doc ~S"""
+
+  Given a list of items from a bulk response and the data sent as a string payload return the items that match the error.
+
+  ## Examples
+
+    iex> items = [%{"index" => %{}}, %{"update" => %{"error" => %{}}}, %{"create" => %{}}, %{"delete" => %{}}]
+    ...> data = "item\nitem_with_errors\nitem\nitem"
+    ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.gather_error_items(items, data)
+    ["item_with_errors"]
+
+  """
+  def gather_error_items(items, data) when is_binary(data) do
+    data_list =
+      data
+      |> String.split("\n")
+
+    gather_error_items(items, data_list)
   end
 end
