@@ -59,7 +59,6 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
         payload_to_send
         |> Enum.join("\n")
         |> Client.bulk_upload(
-          ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
           sucess_fun,
           error_fun
         )

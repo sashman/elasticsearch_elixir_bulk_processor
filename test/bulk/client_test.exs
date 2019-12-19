@@ -21,7 +21,6 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.ClientTest do
         with_mock FunctionStub, error_fun: fn _ -> :ok end do
           Client.bulk_upload(
             "",
-            ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
             & &1,
             &FunctionStub.error_fun/1
           )
@@ -47,7 +46,6 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.ClientTest do
         with_mock FunctionStub2, error_fun: fn _ -> :ok end do
           Client.bulk_upload(
             "one\ntwo\nthree",
-            ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
             & &1,
             &FunctionStub2.error_fun/1
           )

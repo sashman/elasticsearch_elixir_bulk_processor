@@ -1,13 +1,14 @@
 defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
   alias ElasticsearchElixirBulkProcessor.Helpers.BulkResponse
 
-  def bulk_upload(data, cluster, success_fun \\ & &1, error_fun \\ & &1)
+  def bulk_upload(data, success_fun \\ & &1, error_fun \\ & &1)
       when is_binary(data) and
              is_function(success_fun) and
              is_function(error_fun) do
     data = data <> "\n"
 
-    Elasticsearch.post(cluster, "/_bulk", data)
+    ElasticsearchElixirBulkProcessor.ElasticsearchCluster
+    |> Elasticsearch.post("/_bulk", data)
     |> handle_error(success_fun, error_fun, data)
 
     # TODO

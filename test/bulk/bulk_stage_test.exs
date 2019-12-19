@@ -10,11 +10,11 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStageTest do
 
       assert ElasticsearchElixirBulkProcessor.set_byte_threshold(10) == :ok
 
-      with_mock Client, bulk_upload: fn _, _, _, _ -> :ok end do
+      with_mock Client, bulk_upload: fn _, _, _ -> :ok end do
         QueueStage.add(payload)
 
         :timer.sleep(100)
-        assert_called(Client.bulk_upload("0\n1\n2\n3\n4\n5\n6\n7\n8\n9", :_, :_, :_))
+        assert_called(Client.bulk_upload("0\n1\n2\n3\n4\n5\n6\n7\n8\n9", :_, :_))
       end
     end
   end
@@ -34,14 +34,14 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStageTest do
       assert ElasticsearchElixirBulkProcessor.set_byte_threshold(3) == :ok
 
       with_mock Client,
-        bulk_upload: fn _, _, _, _ -> nil end do
+        bulk_upload: fn _, _, _ -> nil end do
         QueueStage.add(payload)
 
         :timer.sleep(100)
 
         assert Client
                |> :meck.history()
-               |> Enum.map(fn {_, {Client, :bulk_upload, [payload, _, _, _]}, _} -> payload end) ==
+               |> Enum.map(fn {_, {Client, :bulk_upload, [payload, _, _]}, _} -> payload end) ==
                  ["00\n11", "22\n33", "44\n5", "6\n7\n8", "9\na\nb", "c\nd\ne", "f"]
       end
     end
