@@ -23,7 +23,7 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.BulkResponse do
       {_, %{"index" => %{"error" => _}}} -> true
       {_, %{"update" => %{"error" => _}}} -> true
       {_, %{"create" => %{"error" => _}}} -> true
-      {_, %{"delte" => %{"error" => _}}} -> true
+      {_, %{"delete" => %{"error" => _}}} -> true
       {_, _} -> false
     end)
     |> Enum.map(fn {data, _} -> data end)
@@ -38,7 +38,12 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.BulkResponse do
     iex> items = [%{"index" => %{}}, %{"update" => %{"error" => %{}}}, %{"create" => %{}}, %{"delete" => %{}}]
     ...> data = "item\nitem_with_errors\nitem\nitem"
     ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.gather_error_items(items, data)
-    ["item_with_errors"]
+    "item_with_errors"
+
+    iex> items = [%{"index" => %{"error" => %{}}}, %{"update" => %{"error" => %{}}}, %{"create" => %{"error" => %{}}}, %{"delete" => %{"error" => %{}}}]
+    ...> data = "item1\nitem2\nitem3\nitem4"
+    ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.gather_error_items(items, data)
+    "item1\nitem2\nitem3\nitem4"
 
   """
   def gather_error_items(items, data) when is_binary(data) do
@@ -47,6 +52,7 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.BulkResponse do
       |> String.split("\n")
 
     gather_error_items(items, data_list)
+    |> Enum.join("\n")
   end
 
   @doc ~S"""
@@ -64,7 +70,7 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.BulkResponse do
     false
 
   """
-  def all_items_error(items),
+  def all_items_error?(items),
     do:
       Enum.all?(items, fn
         %{"index" => %{"error" => _}} -> true
