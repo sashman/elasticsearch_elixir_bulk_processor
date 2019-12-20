@@ -51,9 +51,22 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.ClientTest do
           )
 
           :timer.sleep(100)
-          assert_called(FunctionStub2.error_fun("one"))
-          assert_called(FunctionStub2.error_fun("two"))
-          assert_called(FunctionStub2.error_fun("three"))
+
+          assert_called(
+            FunctionStub2.error_fun(%{
+              data: "one\ntwo\nthree",
+              error:
+                {:error,
+                 %{
+                   "errors" => true,
+                   "items" => [
+                     %{"index" => %{"error" => %{}}},
+                     %{"update" => %{"error" => %{}}},
+                     %{"create" => %{"error" => %{}}}
+                   ]
+                 }}
+            })
+          )
         end
       end
     end

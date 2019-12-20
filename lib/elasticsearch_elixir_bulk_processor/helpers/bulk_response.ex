@@ -62,11 +62,11 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.BulkResponse do
   ## Examples
 
     iex> items = [%{"index" => %{"error" => %{}}}, %{"update" => %{"error" => %{}}}, %{"create" => %{"error" => %{}}}, %{"delete" => %{"error" => %{}}}]
-    ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.all_items_error(items)
+    ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.all_items_error?(items)
     true
 
     iex> items = [%{"index" => %{}}, %{"update" => %{"error" => %{}}}, %{"create" => %{}}, %{"delete" => %{}}]
-    ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.all_items_error(items)
+    ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.all_items_error?(items)
     false
 
   """

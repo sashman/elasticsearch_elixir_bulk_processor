@@ -21,8 +21,6 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
 
   defp handle_res({:ok, %{"errors" => true, "items" => items}}, success_fun, error_fun, data)
        when is_function(error_fun) do
-    # IO.inspect(items, label: "handle_error")
-
     BulkResponse.all_items_error?(items)
     |> handle_multiple(items, success_fun, error_fun, data)
   end
@@ -43,14 +41,14 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
       |> Elasticsearch.post("/_bulk", data)
       |> convert_multiple_to_error()
     after
-      result -> handle_res(result, success_fun, error_fun, data)
+      result ->
+        handle_res(result, success_fun, error_fun, data)
     else
       error ->
         handle_res_error(
           error,
           error_fun,
           BulkResponse.gather_error_items(items, data)
-          |> bulk_upload(success_fun, error_fun)
         )
     end
   end
