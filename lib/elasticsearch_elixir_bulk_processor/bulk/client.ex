@@ -41,8 +41,7 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
       |> Elasticsearch.post("/_bulk", data)
       |> convert_multiple_to_error()
     after
-      result ->
-        handle_res(result, success_fun, error_fun, data)
+      result -> handle_res(result, success_fun, error_fun, data)
     else
       error ->
         handle_res_error(
