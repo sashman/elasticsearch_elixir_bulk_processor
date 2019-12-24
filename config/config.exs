@@ -21,7 +21,9 @@ use Mix.Config
 #     config :logger, level: :info
 #
 
-config :elasticsearch_elixir_bulk_processor, preserve_event_order: false
+config :elasticsearch_elixir_bulk_processor,
+  preserve_event_order: false,
+  retry_function: &ElasticsearchElixirBulkProcessor.Bulk.Retry.default/0
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment

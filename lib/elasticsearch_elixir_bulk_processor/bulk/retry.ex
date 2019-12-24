@@ -5,7 +5,7 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Retry do
     Application.get_env(:elasticsearch_elixir_bulk_processor, :retry_function)
     |> case do
       nil -> default()
-      function -> function
+      function -> function.()
     end
   end
 
