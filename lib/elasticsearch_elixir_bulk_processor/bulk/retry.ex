@@ -20,6 +20,11 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Retry do
     ...> ElasticsearchElixirBulkProcessor.Bulk.Retry.policy()
     #Stream<[enum: #Function<54.35756501/2 in Stream.repeatedly/1>, funs: [#Function<59.35756501/1 in Stream.take_after_guards/2>]]>
 
+    iex> use Retry
+    ...> Application.put_env(:elasticsearch_elixir_bulk_processor, :retry_function, nil)
+    ...> ElasticsearchElixirBulkProcessor.Bulk.Retry.policy()
+    #Stream<[enum: #Function<54.35756501/2 in Stream.repeatedly/1>, funs: [#Function<59.35756501/1 in Stream.take_after_guards/2>]]>
+
   """
   def policy do
     Application.get_env(:elasticsearch_elixir_bulk_processor, :retry_function)
