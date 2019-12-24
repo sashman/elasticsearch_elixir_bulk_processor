@@ -15,15 +15,15 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Retry do
 
     iex> use Retry
     ...> Application.put_env(:elasticsearch_elixir_bulk_processor, :retry_function, fn ->
-    ...>  constant_backoff(100) |> Stream.take(5)
+    ...>  constant_backoff(100) |> Stream.take(2)
     ...> end)
-    ...> ElasticsearchElixirBulkProcessor.Bulk.Retry.policy()
-    #Stream<[enum: #Function<54.35756501/2 in Stream.repeatedly/1>, funs: [#Function<59.35756501/1 in Stream.take_after_guards/2>]]>
+    ...> ElasticsearchElixirBulkProcessor.Bulk.Retry.policy() |> Enum.to_list()
+    'dd'
 
     iex> use Retry
     ...> Application.put_env(:elasticsearch_elixir_bulk_processor, :retry_function, nil)
-    ...> ElasticsearchElixirBulkProcessor.Bulk.Retry.policy()
-    #Stream<[enum: #Function<54.35756501/2 in Stream.repeatedly/1>, funs: [#Function<59.35756501/1 in Stream.take_after_guards/2>]]>
+    ...> ElasticsearchElixirBulkProcessor.Bulk.Retry.policy() |> Enum.to_list()
+    'ddddd'
 
   """
   def policy do
