@@ -5,10 +5,16 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStageTest do
   alias ElasticsearchElixirBulkProcessor.Bulk.{Client, QueueStage, BulkStage}
 
   describe ".set_byte_threshold" do
+    setup do
+      assert ElasticsearchElixirBulkProcessor.set_byte_threshold(10) == :ok
+
+      on_exit(fn ->
+        assert ElasticsearchElixirBulkProcessor.set_byte_threshold(62_914_560) == :ok
+      end)
+    end
+
     test "persists the threshold value" do
       payload = ~w(0 1 2 3 4 5 6 7 8 9 a b c d e f)
-
-      assert ElasticsearchElixirBulkProcessor.set_byte_threshold(10) == :ok
 
       with_mock Client, bulk_upload: fn _, _, _ -> :ok end do
         QueueStage.add(payload)
@@ -29,14 +35,14 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStageTest do
     end
 
     test "persists the threshold value" do
-      payload = ~w(0 1 2 3 4 5 6 7 8 9 a b c d e f)
+      payload = ~w(a b c d e f)
 
       with_mock Client, bulk_upload: fn _, _, _ -> :ok end do
         QueueStage.add(payload)
 
         :timer.sleep(100)
-        assert_called(Client.bulk_upload("0\n1\n2", :_, :_))
-        assert_called(Client.bulk_upload("3\n4\n5", :_, :_))
+        assert_called(Client.bulk_upload("a\nb\nc", :_, :_))
+        assert_called(Client.bulk_upload("d\ne\nf", :_, :_))
       end
     end
   end
