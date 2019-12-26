@@ -7,6 +7,19 @@ defmodule ElasticsearchElixirBulkProcessor.Items.Index do
     :source
   ]
 
+  @doc ~S"""
+
+  ## Examples
+
+    iex> %ElasticsearchElixirBulkProcessor.Items.Index{index: "test", source: %{"test" => "test"}}
+    ...> |> ElasticsearchElixirBulkProcessor.Items.Index.to_payload()
+    "{\"index\":{\"_index\":\"test\"}}\n{\"test\":\"test\"}"
+
+    iex> %ElasticsearchElixirBulkProcessor.Items.Index{index: "test", id: "1", source: %{"test" => "test"}}
+    ...> |> ElasticsearchElixirBulkProcessor.Items.Index.to_payload()
+    "{\"index\":{\"_index\":\"test\",\"_id\":\"1\"}}\n{\"test\":\"test\"}"
+
+  """
   def to_payload(
         %__MODULE__{
           source: source

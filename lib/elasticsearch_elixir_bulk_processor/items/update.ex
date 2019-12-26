@@ -9,6 +9,15 @@ defmodule ElasticsearchElixirBulkProcessor.Items.Update do
     :source
   ]
 
+  @doc ~S"""
+
+  ## Examples
+
+    iex> %ElasticsearchElixirBulkProcessor.Items.Update{index: "test", id: "1", retry_on_conflict: 3, return_source: true, source: %{"test" => "test"}}
+    ...> |> ElasticsearchElixirBulkProcessor.Items.Update.to_payload()
+    "{\"update\":{\"retry_on_conflict\":3,\"_source\":true,\"_index\":\"test\",\"_id\":\"1\"}}\n{\"test\":\"test\"}"
+
+  """
   def to_payload(
         %__MODULE__{
           id: _,
@@ -16,7 +25,7 @@ defmodule ElasticsearchElixirBulkProcessor.Items.Update do
         } = item
       )
       when is_map(source) do
-    action = %{"create" => meta(item)} |> Poison.encode!()
+    action = %{"update" => meta(item)} |> Poison.encode!()
 
     body = source |> Poison.encode!()
 
