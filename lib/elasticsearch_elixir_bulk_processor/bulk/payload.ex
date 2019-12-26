@@ -26,6 +26,7 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Payload do
 
   def manage_payload(events, state = %{preserve_event_order: false}, send_fun) do
     {to_send, rest} = Events.split_first_bytes(events, state.byte_threshold)
+    {to_send, rest} = split_event_count(to_send, rest, state.event_count_threshold)
     send_fun.(to_send)
     QueueStage.add(rest)
   end
@@ -35,6 +36,14 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Payload do
     |> Enum.map(fn chunk ->
       send_fun.(chunk)
     end)
+  end
+
+  defp split_event_count(to_send, rest, nil), do: {to_send, rest}
+
+  defp split_event_count(current_to_send, current_rest, event_count_threshold) do
+    {to_send, rest} = Enum.split(current_to_send, event_count_threshold)
+
+    {to_send, rest ++ current_rest}
   end
 
   defp default_error_fun(error) do

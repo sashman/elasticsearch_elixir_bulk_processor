@@ -17,4 +17,8 @@ defmodule ElasticsearchElixirBulkProcessor do
   def set_byte_threshold(bytes) do
     BulkStage.set_byte_threshold(bytes)
   end
+
+  def set_event_count_threshold(count) do
+    BulkStage.set_event_count_threshold(count)
+  end
 end
