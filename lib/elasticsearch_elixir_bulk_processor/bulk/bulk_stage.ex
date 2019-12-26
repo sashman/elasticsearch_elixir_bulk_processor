@@ -53,6 +53,4 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
     Payload.send(events, state)
     {:noreply, [], state}
   end
-
-  def handle_events(_events, _from, state), do: {:noreply, [], state}
 end
