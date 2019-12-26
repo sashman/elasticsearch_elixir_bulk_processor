@@ -2,14 +2,11 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Payload do
   alias ElasticsearchElixirBulkProcessor.Bulk.{QueueStage, Client}
   alias ElasticsearchElixirBulkProcessor.Helpers.Events
 
-  @log false
-
   def send(events, state) do
     events
     |> manage_payload(state, fn to_send ->
       to_send
       |> send_payload(& &1, &default_error_fun/1)
-      |> log(to_send)
     end)
   end
 
@@ -40,20 +37,8 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Payload do
     end)
   end
 
-  def default_error_fun(error) do
+  defp default_error_fun(error) do
     IO.inspect("Error: #{inspect(error.error)}")
     error
-  end
-
-  def log(time, to_send) do
-    if @log do
-      bytes_sent = to_send |> Events.byte_sum()
-
-      IO.inspect(
-        "events: #{to_send |> length} size: #{Size.humanize!(bytes_sent)}  took: #{
-          time / 1_000_000
-        }s  b/s: #{(bytes_sent / (time / 1_000_000)) |> round |> Size.humanize!()}"
-      )
-    end
   end
 end
