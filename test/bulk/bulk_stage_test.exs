@@ -20,16 +20,23 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStageTest do
   end
 
   describe ".set_event_count_threshold" do
+    setup do
+      assert ElasticsearchElixirBulkProcessor.set_event_count_threshold(3) == :ok
+
+      on_exit(fn ->
+        assert ElasticsearchElixirBulkProcessor.set_event_count_threshold(nil) == :ok
+      end)
+    end
+
     test "persists the threshold value" do
       payload = ~w(0 1 2 3 4 5 6 7 8 9 a b c d e f)
-
-      assert ElasticsearchElixirBulkProcessor.set_event_count_threshold(3) == :ok
 
       with_mock Client, bulk_upload: fn _, _, _ -> :ok end do
         QueueStage.add(payload)
 
         :timer.sleep(100)
         assert_called(Client.bulk_upload("0\n1\n2", :_, :_))
+        assert_called(Client.bulk_upload("3\n4\n5", :_, :_))
       end
     end
   end
