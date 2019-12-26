@@ -17,6 +17,10 @@ defmodule ElasticsearchElixirBulkProcessor.Items.Update do
     ...> |> ElasticsearchElixirBulkProcessor.Items.Update.to_payload()
     "{\"update\":{\"retry_on_conflict\":3,\"_source\":true,\"_index\":\"test\",\"_id\":\"1\"}}\n{\"test\":\"test\"}"
 
+    iex> %ElasticsearchElixirBulkProcessor.Items.Update{index: "test", id: "1", source: %{"test" => "test"}}
+    ...> |> ElasticsearchElixirBulkProcessor.Items.Update.to_payload()
+    "{\"update\":{\"_index\":\"test\",\"_id\":\"1\"}}\n{\"test\":\"test\"}"
+
   """
   def to_payload(
         %__MODULE__{
