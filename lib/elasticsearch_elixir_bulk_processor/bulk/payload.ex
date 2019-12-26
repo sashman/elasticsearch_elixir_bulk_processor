@@ -6,7 +6,7 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Payload do
     events
     |> manage_payload(state, fn to_send ->
       to_send
-      |> send_payload(& &1, &default_error_fun/1)
+      |> send_payload(& &1, & &1)
     end)
   end
 
@@ -44,10 +44,5 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Payload do
     {to_send, rest} = Enum.split(current_to_send, event_count_threshold)
 
     {to_send, rest ++ current_rest}
-  end
-
-  defp default_error_fun(error) do
-    IO.inspect("Error: #{inspect(error.error)}")
-    error
   end
 end
