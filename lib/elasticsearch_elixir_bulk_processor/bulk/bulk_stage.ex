@@ -11,7 +11,7 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
     queue: [],
     byte_threshold: @default_byte_threshold,
     preserve_event_order: false,
-    default_event_count_threshold: @default_event_count_threshold
+    event_count_threshold: @default_event_count_threshold
   }
 
   def start_link(_) do
@@ -34,11 +34,20 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
     GenServer.cast(__MODULE__, {:set_preserve_event_order, preserve_event_order})
   end
 
-  def handle_cast({:set_byte_threshold, byte_threshold}, state),
-    do: {:noreply, [], %{state | byte_threshold: byte_threshold}}
+  def set_event_count_threshold(event_count_threshold)
+      when (is_integer(event_count_threshold) and event_count_threshold > 0) or
+             is_nil(event_count_threshold) do
+    GenServer.cast(__MODULE__, {:set_event_count_threshold, event_count_threshold})
+  end
 
-  def handle_cast({:set_preserve_event_order, preserve_event_order}, state),
-    do: {:noreply, [], %{state | preserve_event_order: preserve_event_order}}
+  def handle_cast({:set_byte_threshold, value}, state),
+    do: {:noreply, [], %{state | byte_threshold: value}}
+
+  def handle_cast({:set_preserve_event_order, value}, state),
+    do: {:noreply, [], %{state | preserve_event_order: value}}
+
+  def handle_cast({:set_event_count_threshold, value}, state),
+    do: {:noreply, [], %{state | event_count_threshold: value}}
 
   def handle_events(events, _from, state) when is_list(events) and length(events) > 0 do
     Payload.send(events, state)
