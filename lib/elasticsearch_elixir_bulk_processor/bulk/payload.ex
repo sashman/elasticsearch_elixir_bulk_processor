@@ -6,7 +6,7 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Payload do
     events
     |> manage_payload(state, fn to_send ->
       to_send
-      |> send_payload(& &1, & &1)
+      |> send_payload(state.success_function, state.error_function)
     end)
   end
 

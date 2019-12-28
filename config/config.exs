@@ -23,7 +23,9 @@ use Mix.Config
 
 config :elasticsearch_elixir_bulk_processor,
   preserve_event_order: false,
-  retry_function: &ElasticsearchElixirBulkProcessor.Bulk.Retry.default/0
+  retry_function: &ElasticsearchElixirBulkProcessor.Bulk.Retry.default/0,
+  success_function: &ElasticsearchElixirBulkProcessor.Bulk.Handlers.default_success/1,
+  error_function: &ElasticsearchElixirBulkProcessor.Bulk.Handlers.default_error/1
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment

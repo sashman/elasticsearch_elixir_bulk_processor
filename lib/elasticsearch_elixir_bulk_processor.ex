@@ -44,6 +44,16 @@ defmodule ElasticsearchElixirBulkProcessor do
 
   ### Success and error handlers
 
+  The callbacks on a successful upload or in case of failed items or failed request can bet set through the config.
+  On success, the handler is called with the Elasticsearch bulk request. On failure, the hanlder is called with`%{data: any, error: any}`.
+  See `ElasticsearchElixirBulkProcessor.Bulk.Handlers`.
+
+  ```
+  config :elasticsearch_elixir_bulk_processor,
+    success_function: &MyApp.success_handler/1,
+    error_function: &MyApp.error_handler/1
+  ```
+
   """
 
   @doc """
@@ -60,11 +70,12 @@ defmodule ElasticsearchElixirBulkProcessor do
 
       iex> alias ElasticsearchElixirBulkProcessor.Items.Index
       ...> [
-      ...>  %Index{index: "test", source: %{"field" => "value1"}}
-      ...>  %Index{index: "test", source: %{"field" => "value2"}}
-      ...>  %Index{index: "test", source: %{"field" => "value3"}}
+      ...>  %Index{index: "test_index", source: %{"field" => "value1"}},
+      ...>  %Index{index: "test_index", source: %{"field" => "value2"}},
+      ...>  %Index{index: "test_index", source: %{"field" => "value3"}}
       ...> ]
       ...> |> ElasticsearchElixirBulkProcessor.send_requests()
+      :ok
 
   """
   def send_requests(bulk_items) when is_list(bulk_items) do

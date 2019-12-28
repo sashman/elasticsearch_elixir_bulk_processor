@@ -11,7 +11,9 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
     queue: [],
     byte_threshold: @default_byte_threshold,
     preserve_event_order: false,
-    event_count_threshold: @default_event_count_threshold
+    event_count_threshold: @default_event_count_threshold,
+    success_function: &ElasticsearchElixirBulkProcessor.Bulk.Handlers.default_success/1,
+    error_function: &ElasticsearchElixirBulkProcessor.Bulk.Handlers.default_error/1
   }
 
   def start_link(_) do
@@ -22,8 +24,17 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
     preserve_event_order =
       Application.get_env(:elasticsearch_elixir_bulk_processor, :preserve_event_order)
 
-    {:consumer, %{@init_state | preserve_event_order: preserve_event_order},
-     subscribe_to: [{QueueStage, min_demand: 5, max_demand: 75}]}
+    success_fun = Application.get_env(:elasticsearch_elixir_bulk_processor, :success_function)
+
+    error_fun = Application.get_env(:elasticsearch_elixir_bulk_processor, :error_function)
+
+    {:consumer,
+     %{
+       @init_state
+       | preserve_event_order: preserve_event_order,
+         success_function: success_fun,
+         error_function: error_fun
+     }, subscribe_to: [{QueueStage, min_demand: 5, max_demand: 75}]}
   end
 
   def set_byte_threshold(byte_threshold) when is_integer(byte_threshold) do
