@@ -49,7 +49,7 @@ config :elasticsearch_elixir_bulk_processor, preserve_event_order: false
 
 ### Retries
 
-Retry policy, this uses the [ElixirRetry](https://github.com/safwank/ElixirRetry) DSL. See `ElasticsearchElixirBulkProcessor.Bulk.Retry.policy`.
+Retry policy, this uses the [ElixirRetry](https://github.com/safwank/ElixirRetry) DSL. See [`ElasticsearchElixirBulkProcessor.Bulk.Retry.policy`](https://github.com/sashman/elasticsearch_elixir_bulk_processor/blob/0d015282315c016db07334824c7b98c858d43658/lib/elasticsearch_elixir_bulk_processor/bulk/retry.ex#L29).
 
 ```elixir
 config :elasticsearch_elixir_bulk_processor, retry_function: &MyApp.Retry.policy/0
@@ -59,7 +59,7 @@ config :elasticsearch_elixir_bulk_processor, retry_function: &MyApp.Retry.policy
 
 The callbacks on a successful upload or in case of failed items or failed request can bet set through the config.
 On success, the handler is called with the Elasticsearch bulk request. On failure, the hanlder is called with`%{data: any, error: any}`, `data` being the original payload and `error` being the response or HTTP error.
-See `ElasticsearchElixirBulkProcessor.Bulk.Handlers`.
+See [`ElasticsearchElixirBulkProcessor.Bulk.Handlers`](https://github.com/sashman/elasticsearch_elixir_bulk_processor/blob/master/lib/elasticsearch_elixir_bulk_processor/bulk/handlers.ex).
 
 ```elixir
 config :elasticsearch_elixir_bulk_processor,
