@@ -60,7 +60,7 @@ defmodule ElasticsearchElixirBulkProcessor do
   Send a list of request items to ELasticsearch. This mechanism uses GenStages for back pressure.
   NOTE: It should be completely reasonable to use this function by passing single element lists, the mechanism aggregates the items together prior to sending them.
 
-  The list elements much be structs:
+  The list elements must be structs:
     * `ElasticsearchElixirBulkProcessor.Items.Index`
     * `ElasticsearchElixirBulkProcessor.Items.Create`
     * `ElasticsearchElixirBulkProcessor.Items.Update`

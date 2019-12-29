@@ -3,9 +3,10 @@
 [![CircleCI](https://circleci.com/gh/sashman/elasticsearch_elixir_bulk_processor.svg?style=svg)](https://circleci.com/gh/sashman/elasticsearch_elixir_bulk_processor)
 [![Coverage Status](https://coveralls.io/repos/github/sashman/elasticsearch_elixir_bulk_processor/badge.svg?branch=master)](https://coveralls.io/github/sashman/elasticsearch_elixir_bulk_processor?branch=master)
 
-Port of the [Java bulk processor](https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-docs-bulk-processor.html)
+Elasticsearch Elixir Bulk Processor is a configurable manager for efficiently inserting data into Elasticsearch.
+This processor uses genstages for handling backpressure, and various settings to control the bulk payloads being uploaded to Elasticsearch.
 
-**Under construction!**
+Inspired by the [Java Bulk Processor](https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-docs-bulk-processor.html)
 
 ## Installation
 
@@ -18,6 +19,81 @@ def deps do
     {:elasticsearch_elixir_bulk_processor, "~> 0.1.0"}
   ]
 end
+```
+
+## Configuration
+
+### Action count
+
+Number of actions/items to send per bulk (can be changed at run time)
+
+```elixir
+ElasticsearchElixirBulkProcessor.set_event_count_threshold(100)
+```
+
+### Byte size
+
+Max number of bytes to send per bulk (can be changed at run time)
+
+```elixir
+ElasticsearchElixirBulkProcessor.set_byte_threshold(100)
+```
+
+### Action order
+
+Preservation of order of actions/items
+
+```elixir
+config :elasticsearch_elixir_bulk_processor, preserve_event_order: false
+```
+
+### Retries
+
+Retry policy, this uses the [ElixirRetry](https://github.com/safwank/ElixirRetry) DSL. See `ElasticsearchElixirBulkProcessor.Bulk.Retry.policy`.
+
+```elixir
+config :elasticsearch_elixir_bulk_processor, retry_function: &MyApp.Retry.policy/0
+```
+
+### Success and error handlers
+
+The callbacks on a successful upload or in case of failed items or failed request can bet set through the config.
+On success, the handler is called with the Elasticsearch bulk request. On failure, the hanlder is called with`%{data: any, error: any}`, `data` being the original payload and `error` being the response or HTTP error.
+See `ElasticsearchElixirBulkProcessor.Bulk.Handlers`.
+
+```elixir
+config :elasticsearch_elixir_bulk_processor,
+  success_function: &MyApp.success_handler/1,
+  error_function: &MyApp.error_handler/1
+```
+
+### Sending data
+
+```elixir
+ElasticsearchElixirBulkProcessor.send_requests(list_of_items)
+```
+
+To send a list of request items to Elasticsearch. This mechanism uses GenStages for back pressure.
+NOTE: It should be completely reasonable to use this function by passing single element lists, the mechanism aggregates the items together prior to sending them.
+
+The list elements must be structs:
+
+- `ElasticsearchElixirBulkProcessor.Items.Index`
+- `ElasticsearchElixirBulkProcessor.Items.Create`
+- `ElasticsearchElixirBulkProcessor.Items.Update`
+- `ElasticsearchElixirBulkProcessor.Items.Delete`
+
+#### Examples
+
+```elixir
+    iex> alias ElasticsearchElixirBulkProcessor.Items.Index
+    ...> [
+    ...>  %Index{index: "test_index", source: %{"field" => "value1"}},
+    ...>  %Index{index: "test_index", source: %{"field" => "value2"}},
+    ...>  %Index{index: "test_index", source: %{"field" => "value3"}}
+    ...> ]
+    ...> |> ElasticsearchElixirBulkProcessor.send_requests()
+    :ok
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
