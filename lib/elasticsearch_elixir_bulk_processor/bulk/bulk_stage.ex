@@ -1,6 +1,6 @@
 defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
   use GenStage
-  alias ElasticsearchElixirBulkProcessor.Bulk.{QueueStage, Payload}
+  alias ElasticsearchElixirBulkProcessor.Bulk.{QueueStage, Payload, Handlers}
 
   # 60mb
   @default_byte_threshold 62_914_560
@@ -12,8 +12,8 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
     byte_threshold: @default_byte_threshold,
     preserve_event_order: false,
     event_count_threshold: @default_event_count_threshold,
-    success_function: &ElasticsearchElixirBulkProcessor.Bulk.Handlers.default_success/1,
-    error_function: &ElasticsearchElixirBulkProcessor.Bulk.Handlers.default_error/1
+    success_function: &Handlers.default_success/1,
+    error_function: &Handlers.default_error/1
   }
 
   def start_link(_) do
@@ -24,9 +24,19 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
     preserve_event_order =
       Application.get_env(:elasticsearch_elixir_bulk_processor, :preserve_event_order)
 
-    success_fun = Application.get_env(:elasticsearch_elixir_bulk_processor, :success_function)
+    success_fun =
+      Application.get_env(
+        :elasticsearch_elixir_bulk_processor,
+        :success_function,
+        &Handlers.default_success/1
+      )
 
-    error_fun = Application.get_env(:elasticsearch_elixir_bulk_processor, :error_function)
+    error_fun =
+      Application.get_env(
+        :elasticsearch_elixir_bulk_processor,
+        :error_function,
+        &Handlers.default_error/1
+      )
 
     {:consumer,
      %{
