@@ -10,7 +10,7 @@ Inspired by the [Java Bulk Processor](https://www.elastic.co/guide/en/elasticsea
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+If [available in Hex](https://hex.pm/packages/elasticsearch_elixir_bulk_processor), the package can be installed
 by adding `elasticsearch_elixir_bulk_processor` to your list of dependencies in `mix.exs`:
 
 ```elixir
