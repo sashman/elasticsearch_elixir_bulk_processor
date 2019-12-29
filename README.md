@@ -1,5 +1,6 @@
 # ElasticsearchElixirBulkProcessor
 
+![Hex.pm](https://img.shields.io/hexpm/v/elasticsearch_elixir_bulk_processor)
 [![CircleCI](https://circleci.com/gh/sashman/elasticsearch_elixir_bulk_processor.svg?style=svg)](https://circleci.com/gh/sashman/elasticsearch_elixir_bulk_processor)
 [![Coverage Status](https://coveralls.io/repos/github/sashman/elasticsearch_elixir_bulk_processor/badge.svg?branch=master)](https://coveralls.io/github/sashman/elasticsearch_elixir_bulk_processor?branch=master)
 
