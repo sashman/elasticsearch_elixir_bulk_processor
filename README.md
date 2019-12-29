@@ -58,7 +58,7 @@ The list elements must be structs:
 
 Can be configurate via the `ELASTICSEARCH_URL` environment variable, defaults to: `"http://localhost:9200"`. ALternatively:
 
-```
+```elixir
 config :elasticsearch_elixir_bulk_processor,
        ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
        url: "http://localhost:9200",
