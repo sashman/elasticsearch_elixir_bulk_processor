@@ -4,10 +4,13 @@ defmodule ElasticsearchElixirBulkProcessor.MixProject do
   def project do
     [
       app: :elasticsearch_elixir_bulk_processor,
+      name: "Elasticsearch Elixir Bulk Processor",
       version: String.trim(File.read!("VERSION")),
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
+      description: description(),
       deps: deps(),
+      package: package(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         coveralls: :test,
@@ -26,6 +29,20 @@ defmodule ElasticsearchElixirBulkProcessor.MixProject do
     ]
   end
 
+  defp description do
+    "Elasticsearch Elixir Bulk Processor is a configurable manager for efficiently inserting data into Elasticsearch. This processor uses genstages for handling backpressure, and various settings to control the bulk payloads being uploaded to Elasticsearch."
+  end
+
+  defp package() do
+    [
+      # These are the default files included in the package
+      files: ~w(lib priv .formatter.exs mix.exs README* readme* LICENSE*
+                license* CHANGELOG* changelog* src),
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "https://github.com/sashman/elasticsearch_elixir_bulk_processor"}
+    ]
+  end
+
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
@@ -36,9 +53,8 @@ defmodule ElasticsearchElixirBulkProcessor.MixProject do
       {:eliver, "~> 2.0", only: :dev},
       {:size, "~> 0.1.0"},
       {:mock, "~> 0.3.0", only: :test},
-      {:retry, "~> 0.13"}
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:retry, "~> 0.13"},
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false}
     ]
   end
 end
