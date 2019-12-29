@@ -1,16 +1,18 @@
 # ElasticsearchElixirBulkProcessor
 
+![Hex.pm](https://img.shields.io/hexpm/v/elasticsearch_elixir_bulk_processor)
 [![CircleCI](https://circleci.com/gh/sashman/elasticsearch_elixir_bulk_processor.svg?style=svg)](https://circleci.com/gh/sashman/elasticsearch_elixir_bulk_processor)
 [![Coverage Status](https://coveralls.io/repos/github/sashman/elasticsearch_elixir_bulk_processor/badge.svg?branch=master)](https://coveralls.io/github/sashman/elasticsearch_elixir_bulk_processor?branch=master)
+![Hex.pm](https://img.shields.io/hexpm/l/elasticsearch_elixir_bulk_processor)
 
 Elasticsearch Elixir Bulk Processor is a configurable manager for efficiently inserting data into Elasticsearch.
 This processor uses genstages for handling backpressure, and various settings to control the bulk payloads being uploaded to Elasticsearch.
 
-Inspired by the [Java Bulk Processor](https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-docs-bulk-processor.html)
+Inspired by the [Java Bulk Processor](https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-docs-bulk-processor.html). Uses [elasticsearch-elixir](https://github.com/danielberkompas/elasticsearch-elixir) as the client.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+If [available in Hex](https://hex.pm/packages/elasticsearch_elixir_bulk_processor), the package can be installed
 by adding `elasticsearch_elixir_bulk_processor` to your list of dependencies in `mix.exs`:
 
 ```elixir
@@ -54,7 +56,16 @@ The list elements must be structs:
 
 ### Elasticsearch endpoint
 
-Can be configurate via the `ELASTICSEARCH_URL` environment variable, defaults to: `"http://localhost:9200"`.
+Can be configurate via the `ELASTICSEARCH_URL` environment variable, defaults to: `"http://localhost:9200"`. Alternatively:
+
+```elixir
+config :elasticsearch_elixir_bulk_processor,
+       ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
+       url: "http://localhost:9200",
+       api: Elasticsearch.API.HTTP
+```
+
+See the [client configuration](https://github.com/danielberkompas/elasticsearch-elixir#configuration) for more.
 
 ### Action count
 
