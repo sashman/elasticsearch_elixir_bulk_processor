@@ -45,7 +45,7 @@ defmodule ElasticsearchElixirBulkProcessor do
   ### Success and error handlers
 
   The callbacks on a successful upload or in case of failed items or failed request can bet set through the config.
-  On success, the handler is called with the Elasticsearch bulk request. On failure, the hanlder is called with`%{data: any, error: any}`.
+  On success, the handler is called with the Elasticsearch bulk request. On failure, the hanlder is called with`%{data: any, error: any}`, `data` being the original payload and `error` being the response or HTTP error.
   See `ElasticsearchElixirBulkProcessor.Bulk.Handlers`.
 
   ```
