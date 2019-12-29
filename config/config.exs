@@ -36,7 +36,7 @@ config :elasticsearch_elixir_bulk_processor,
 config :elasticsearch_elixir_bulk_processor,
        ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
        # The URL where Elasticsearch is hosted on your system
-       url: "http://localhost:9200",
+       url: {:system, "ELASTICSEARCH_URL"},
 
        # If you want to mock the responses of the Elasticsearch JSON API
        # for testing or other purposes, you can inject a different module
