@@ -3,6 +3,7 @@
 ![Hex.pm](https://img.shields.io/hexpm/v/elasticsearch_elixir_bulk_processor)
 [![CircleCI](https://circleci.com/gh/sashman/elasticsearch_elixir_bulk_processor.svg?style=svg)](https://circleci.com/gh/sashman/elasticsearch_elixir_bulk_processor)
 [![Coverage Status](https://coveralls.io/repos/github/sashman/elasticsearch_elixir_bulk_processor/badge.svg?branch=master)](https://coveralls.io/github/sashman/elasticsearch_elixir_bulk_processor?branch=master)
+![Hex.pm](https://img.shields.io/hexpm/l/elasticsearch_elixir_bulk_processor)
 
 Elasticsearch Elixir Bulk Processor is a configurable manager for efficiently inserting data into Elasticsearch.
 This processor uses genstages for handling backpressure, and various settings to control the bulk payloads being uploaded to Elasticsearch.
