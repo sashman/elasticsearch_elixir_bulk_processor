@@ -21,6 +21,35 @@ def deps do
 end
 ```
 
+## Sending data
+
+```elixir
+ElasticsearchElixirBulkProcessor.send_requests(list_of_items)
+```
+
+To send a list of request items to Elasticsearch. This mechanism uses GenStages for back pressure.
+NOTE: It should be completely reasonable to use this function by passing single element lists, the mechanism aggregates the items together prior to sending them.
+
+The list elements must be structs:
+
+- `ElasticsearchElixirBulkProcessor.Items.Index`
+- `ElasticsearchElixirBulkProcessor.Items.Create`
+- `ElasticsearchElixirBulkProcessor.Items.Update`
+- `ElasticsearchElixirBulkProcessor.Items.Delete`
+
+#### Examples
+
+```elixir
+    iex> alias ElasticsearchElixirBulkProcessor.Items.Index
+    ...> [
+    ...>  %Index{index: "test_index", source: %{"field" => "value1"}},
+    ...>  %Index{index: "test_index", source: %{"field" => "value2"}},
+    ...>  %Index{index: "test_index", source: %{"field" => "value3"}}
+    ...> ]
+    ...> |> ElasticsearchElixirBulkProcessor.send_requests()
+    :ok
+```
+
 ## Configuration
 
 ### Action count
@@ -65,35 +94,6 @@ See [`ElasticsearchElixirBulkProcessor.Bulk.Handlers`](https://github.com/sashma
 config :elasticsearch_elixir_bulk_processor,
   success_function: &MyApp.success_handler/1,
   error_function: &MyApp.error_handler/1
-```
-
-### Sending data
-
-```elixir
-ElasticsearchElixirBulkProcessor.send_requests(list_of_items)
-```
-
-To send a list of request items to Elasticsearch. This mechanism uses GenStages for back pressure.
-NOTE: It should be completely reasonable to use this function by passing single element lists, the mechanism aggregates the items together prior to sending them.
-
-The list elements must be structs:
-
-- `ElasticsearchElixirBulkProcessor.Items.Index`
-- `ElasticsearchElixirBulkProcessor.Items.Create`
-- `ElasticsearchElixirBulkProcessor.Items.Update`
-- `ElasticsearchElixirBulkProcessor.Items.Delete`
-
-#### Examples
-
-```elixir
-    iex> alias ElasticsearchElixirBulkProcessor.Items.Index
-    ...> [
-    ...>  %Index{index: "test_index", source: %{"field" => "value1"}},
-    ...>  %Index{index: "test_index", source: %{"field" => "value2"}},
-    ...>  %Index{index: "test_index", source: %{"field" => "value3"}}
-    ...> ]
-    ...> |> ElasticsearchElixirBulkProcessor.send_requests()
-    :ok
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
