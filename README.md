@@ -52,6 +52,10 @@ The list elements must be structs:
 
 ## Configuration
 
+### Elasticsearch endpoint
+
+Can be configurate via the `ELASTICSEARCH_URL` environment variable, defaults to: `"http://localhost:9200"`.
+
 ### Action count
 
 Number of actions/items to send per bulk (can be changed at run time)
