@@ -8,7 +8,7 @@
 Elasticsearch Elixir Bulk Processor is a configurable manager for efficiently inserting data into Elasticsearch.
 This processor uses genstages for handling backpressure, and various settings to control the bulk payloads being uploaded to Elasticsearch.
 
-Inspired by the [Java Bulk Processor](https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-docs-bulk-processor.html)
+Inspired by the [Java Bulk Processor](https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-docs-bulk-processor.html). Uses [elasticsearch-elixir](https://github.com/danielberkompas/elasticsearch-elixir) as the client.
 
 ## Installation
 
@@ -56,7 +56,14 @@ The list elements must be structs:
 
 ### Elasticsearch endpoint
 
-Can be configurate via the `ELASTICSEARCH_URL` environment variable, defaults to: `"http://localhost:9200"`.
+Can be configurate via the `ELASTICSEARCH_URL` environment variable, defaults to: `"http://localhost:9200"`. ALternatively:
+
+```
+config :elasticsearch_elixir_bulk_processor,
+       ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
+       url: "http://localhost:9200",
+       api: Elasticsearch.API.HTTP
+```
 
 ### Action count
 
