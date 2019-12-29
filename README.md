@@ -56,7 +56,7 @@ The list elements must be structs:
 
 ### Elasticsearch endpoint
 
-Can be configurate via the `ELASTICSEARCH_URL` environment variable, defaults to: `"http://localhost:9200"`. ALternatively:
+Can be configurate via the `ELASTICSEARCH_URL` environment variable, defaults to: `"http://localhost:9200"`. Alternatively:
 
 ```elixir
 config :elasticsearch_elixir_bulk_processor,
@@ -64,6 +64,8 @@ config :elasticsearch_elixir_bulk_processor,
        url: "http://localhost:9200",
        api: Elasticsearch.API.HTTP
 ```
+
+See the [client configuration](https://github.com/danielberkompas/elasticsearch-elixir#configuration) for more.
 
 ### Action count
 
