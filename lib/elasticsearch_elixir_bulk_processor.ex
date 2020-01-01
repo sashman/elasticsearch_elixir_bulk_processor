@@ -45,6 +45,7 @@ defmodule ElasticsearchElixirBulkProcessor do
   config :elasticsearch_elixir_bulk_processor, retry_function: &MyApp.Retry.policy/0
   ```
 
+  Default: `constant_backoff(100) |> Stream.take(5)`
 
   ### Success and error handlers
 
