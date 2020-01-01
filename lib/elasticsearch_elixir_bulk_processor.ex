@@ -83,6 +83,7 @@ defmodule ElasticsearchElixirBulkProcessor do
       :ok
 
   """
+  @spec send_requests(list(ElasticsearchElixirBulkProcessor.Items.Item.t())) :: :ok
   def send_requests(bulk_items) when is_list(bulk_items) do
     Upload.add_requests(bulk_items)
   end
@@ -96,6 +97,7 @@ defmodule ElasticsearchElixirBulkProcessor do
       :ok
 
   """
+  @spec set_byte_threshold(integer()) :: :ok
   def set_byte_threshold(bytes) do
     BulkStage.set_byte_threshold(bytes)
   end
@@ -109,6 +111,7 @@ defmodule ElasticsearchElixirBulkProcessor do
       :ok
 
   """
+  @spec set_event_count_threshold(integer()) :: :ok
   def set_event_count_threshold(count) do
     BulkStage.set_event_count_threshold(count)
   end
