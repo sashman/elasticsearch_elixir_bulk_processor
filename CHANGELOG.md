@@ -8,9 +8,3 @@
 * Configurable succuess and failure handlers
 * Configurable retry policy
 * GenStage based backpressure control
-
-## 0.0.3
-
-
-## 0.0.2
-* Initial release
