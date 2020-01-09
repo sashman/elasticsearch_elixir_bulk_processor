@@ -18,7 +18,7 @@ by adding `elasticsearch_elixir_bulk_processor` to your list of dependencies in 
 ```elixir
 def deps do
   [
-    {:elasticsearch_elixir_bulk_processor, "~> 0.1.0"}
+    {:elasticsearch_elixir_bulk_processor, "~> 0.1"}
   ]
 end
 ```
