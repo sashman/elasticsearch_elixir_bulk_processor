@@ -36,7 +36,7 @@ defmodule ElasticsearchElixirBulkProcessor.MixProject do
   defp package() do
     [
       # These are the default files included in the package
-      files: ~w(lib .formatter.exs mix.exs README* LICENSE*
+      files: ~w(lib .formatter.exs mix.exs README* LICENSE* VERSION
               CHANGELOG*),
       licenses: ["Apache-2.0"],
       links: %{"GitHub" => "https://github.com/sashman/elasticsearch_elixir_bulk_processor"}
