@@ -8,7 +8,7 @@
 Elasticsearch Elixir Bulk Processor is a configurable manager for efficiently inserting data into Elasticsearch.
 This processor uses [GenStages](https://hexdocs.pm/gen_stage/GenStage.html) for handling backpressure, and various settings to control the bulk payloads being uploaded to Elasticsearch.
 
-Inspired by the [Java Bulk Processor](https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-docs-bulk-processor.html). Uses [elasticsearch-elixir](https://github.com/danielberkompas/elasticsearch-elixir) as the client.
+Inspired by the [Java Bulk Processor](https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-docs-bulk-processor.html). Uses [elasticsearch-elixir](https://github.com/danielberkompas/elasticsearch-elixir) as the client. Featured on the [Elastic Community Contributed Clients page](https://www.elastic.co/guide/en/elasticsearch/client/community/current/index.html#erlang).
 
 ## Installation
 
