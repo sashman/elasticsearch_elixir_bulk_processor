@@ -99,6 +99,14 @@ Retry policy, this uses the [ElixirRetry](https://github.com/safwank/ElixirRetry
 config :elasticsearch_elixir_bulk_processor, retry_function: &MyApp.Retry.policy/0
 ```
 
+Default:
+
+```elixir
+def default do
+  constant_backoff(100) |> Stream.take(5)
+end
+```
+
 ### Success and error handlers
 
 The callbacks on a successful upload or in case of failed items or failed request can bet set through the config.
