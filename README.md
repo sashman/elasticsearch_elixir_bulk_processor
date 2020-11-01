@@ -119,6 +119,19 @@ config :elasticsearch_elixir_bulk_processor,
   error_function: &MyApp.error_handler/1
 ```
 
+It's highly recommended you add an error handler to make sure your data is uploaded succesfully, for example you can use the logger:
+
+```elixir
+  require Logger
+  ...
+
+  def error_handler(%{data: _, error: {_, error}}) do
+    error
+    |> inspect
+    |> Logger.error()
+  end
+```
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/elasticsearch_elixir_bulk_processor](https://hexdocs.pm/elasticsearch_elixir_bulk_processor).
