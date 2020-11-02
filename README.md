@@ -69,7 +69,7 @@ See the [client configuration](https://github.com/danielberkompas/elasticsearch-
 
 ### Action count
 
-Number of actions/items to send per bulk (can be changed at run time)
+Number of actions/items to send per bulk (can be changed at run time), deault is `nil` (unlimited):
 
 ```elixir
 ElasticsearchElixirBulkProcessor.set_event_count_threshold(100)
@@ -77,7 +77,7 @@ ElasticsearchElixirBulkProcessor.set_event_count_threshold(100)
 
 ### Byte size
 
-Max number of bytes to send per bulk (can be changed at run time)
+Max number of bytes to send per bulk (can be changed at run time), default is `62_914_560` (60mb):
 
 ```elixir
 ElasticsearchElixirBulkProcessor.set_byte_threshold(100)
