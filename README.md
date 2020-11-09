@@ -138,7 +138,7 @@ be found at [https://hexdocs.pm/elasticsearch_elixir_bulk_processor](https://hex
 
 ## Testing script
 
-Run Elasticsearch set up with:
+The testing script is used to compare insertion using direct upload vs using a GenStage based approach. Run Elasticsearch set up with:
 
 ```
 docker-compose up
