@@ -1,6 +1,6 @@
 # ElasticsearchElixirBulkProcessor
 
-![Hex.pm](https://img.shields.io/hexpm/v/elasticsearch_elixir_bulk_processor)
+[![Hex.pm](https://img.shields.io/hexpm/v/elasticsearch_elixir_bulk_processor)](https://hex.pm/packages/elasticsearch_elixir_bulk_processor)
 [![CircleCI](https://circleci.com/gh/sashman/elasticsearch_elixir_bulk_processor.svg?style=svg)](https://circleci.com/gh/sashman/elasticsearch_elixir_bulk_processor)
 [![Coverage Status](https://coveralls.io/repos/github/sashman/elasticsearch_elixir_bulk_processor/badge.svg?branch=master)](https://coveralls.io/github/sashman/elasticsearch_elixir_bulk_processor?branch=master)
 ![Hex.pm](https://img.shields.io/hexpm/l/elasticsearch_elixir_bulk_processor)
@@ -140,13 +140,13 @@ be found at [https://hexdocs.pm/elasticsearch_elixir_bulk_processor](https://hex
 
 The testing script is used to compare insertion using direct upload vs using a GenStage based approach. Run Elasticsearch set up with:
 
-```
+```bash
 docker-compose up
 ```
 
 Run test:
 
-```
+```bash
 mix insert_test <INSERT_COUNT> <BULK_SIZE> staged|direct
 ```
 
