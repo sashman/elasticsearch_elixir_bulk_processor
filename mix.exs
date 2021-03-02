@@ -54,7 +54,7 @@ defmodule ElasticsearchElixirBulkProcessor.MixProject do
       {:size, "~> 0.1.0"},
       {:mock, "~> 0.3.0", only: :test},
       {:retry, "~> 0.13"},
-      {:ex_doc, "~> 0.21", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.23", only: :dev, runtime: false}
     ]
   end
 end
