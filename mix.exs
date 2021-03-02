@@ -48,7 +48,7 @@ defmodule ElasticsearchElixirBulkProcessor.MixProject do
     [
       {:elasticsearch, "~> 1.0.0"},
       {:poison, "~> 3.1"},
-      {:gen_stage, "~> 0.14"},
+      {:gen_stage, "~> 1.0"},
       {:excoveralls, "~> 0.10", only: :test},
       {:eliver, "~> 2.0", only: :dev},
       {:size, "~> 0.1.0"},
