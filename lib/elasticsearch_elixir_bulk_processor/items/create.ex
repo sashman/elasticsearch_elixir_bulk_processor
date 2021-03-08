@@ -19,6 +19,11 @@ defmodule ElasticsearchElixirBulkProcessor.Items.Create do
     ...> |> ElasticsearchElixirBulkProcessor.Items.Create.to_payload()
     "{\"create\":{\"_index\":\"test\",\"_id\":\"1\"}}\n{\"test\":\"test\"}"
 
+    iex> %ElasticsearchElixirBulkProcessor.Items.Create{index: "test", id: "1", source: %{"test" => "test
+    ...>with a new line"}}
+    ...> |> ElasticsearchElixirBulkProcessor.Items.Create.to_payload()
+    "{\"create\":{\"_index\":\"test\",\"_id\":\"1\"}}\n{\"test\":\"test\\nwith a new line\"}"
+
   """
   def to_payload(
         %ElasticsearchElixirBulkProcessor.Items.Create{

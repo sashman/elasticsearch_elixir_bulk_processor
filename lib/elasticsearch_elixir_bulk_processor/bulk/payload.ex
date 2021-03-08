@@ -6,6 +6,8 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Payload do
     events
     |> manage_payload(state, fn to_send ->
       to_send
+      |> Stream.map(& &1.__struct__.to_payload(&1))
+      |> Enum.join("\n")
       |> send_payload(state.success_function, state.error_function)
     end)
   end
@@ -14,7 +16,6 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Payload do
     {time, _} =
       :timer.tc(fn ->
         payload_to_send
-        |> Enum.join("\n")
         |> Client.bulk_upload(
           sucess_fun,
           error_fun

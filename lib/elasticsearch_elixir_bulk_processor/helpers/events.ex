@@ -1,12 +1,20 @@
 defmodule ElasticsearchElixirBulkProcessor.Helpers.Events do
+  alias ElasticsearchElixirBulkProcessor.Items.{Create, Index, Update, Delete}
+
   @doc ~S"""
 
   Return the size of the string in bytes
 
   ## Examples
 
-    iex> ElasticsearchElixirBulkProcessor.Helpers.Events.byte_sum(["abcd", "a", "b"])
-    6
+    iex> ElasticsearchElixirBulkProcessor.Helpers.Events.byte_sum([%ElasticsearchElixirBulkProcessor.Items.Index{index: "test", source: %{"test" => "test"}}])
+    43
+
+    iex> ElasticsearchElixirBulkProcessor.Helpers.Events.byte_sum([
+    ...> %ElasticsearchElixirBulkProcessor.Items.Index{index: "test", source: %{"test" => "test"}},
+    ...> %ElasticsearchElixirBulkProcessor.Items.Index{index: "test", source: %{"test" => "test"}}
+    ...> ])
+    86
 
     iex> ElasticsearchElixirBulkProcessor.Helpers.Events.byte_sum([])
     0
@@ -15,8 +23,13 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.Events do
   def byte_sum([]),
     do: 0
 
-  def byte_sum(string_list) when is_list(string_list),
-    do: Stream.map(string_list, &byte_size/1) |> Enum.sum()
+  def byte_sum(item_list) when is_list(item_list),
+    do:
+      Stream.map(item_list, fn %struct{} = item
+                               when struct in [Create, Index, Update, Delete] ->
+        struct.to_payload(item) |> byte_size
+      end)
+      |> Enum.sum()
 
   @doc ~S"""
 
@@ -24,17 +37,44 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.Events do
 
   ## Examples
 
-    iex> ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    ...> |> ElasticsearchElixirBulkProcessor.Helpers.Events.split_first_bytes(3)
-    {["0", "1", "2"], ["3", "4", "5", "6", "7", "8", "9"]}
+    iex> alias ElasticsearchElixirBulkProcessor.Items.Index
+    ...> [
+    ...> %Index{index: "test", source: %{"test" => "test"}},
+    ...> %Index{index: "test", source: %{"test" => "test"}},
+    ...> %Index{index: "test", source: %{"test" => "test"}}
+    ...> ]
+    ...> |> ElasticsearchElixirBulkProcessor.Helpers.Events.split_first_bytes(43)
+    alias ElasticsearchElixirBulkProcessor.Items.Index
+    {
+      [%Index{index: "test", source: %{"test" => "test"}}],
+      [%Index{index: "test", source: %{"test" => "test"}}, %Index{index: "test", source: %{"test" => "test"}}]
+    }
 
-    iex> ["00", "11", "22", "33"]
-    ...> |> ElasticsearchElixirBulkProcessor.Helpers.Events.split_first_bytes(3)
-    {["00", "11"], ["22", "33"]}
+    iex> alias ElasticsearchElixirBulkProcessor.Items.Index
+    ...> [
+    ...> %Index{index: "test", source: %{"test" => "test"}},
+    ...> %Index{index: "test", source: %{"test" => "test"}},
+    ...> %Index{index: "test", source: %{"test" => "test"}}
+    ...> ]
+    ...> |> ElasticsearchElixirBulkProcessor.Helpers.Events.split_first_bytes(43 * 2)
+    alias ElasticsearchElixirBulkProcessor.Items.Index
+    {
+      [%Index{index: "test", source: %{"test" => "test"}}, %Index{index: "test", source: %{"test" => "test"}}],
+      [%Index{index: "test", source: %{"test" => "test"}}]
+    }
 
-    iex> ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    iex> alias ElasticsearchElixirBulkProcessor.Items.Index
+    ...> [
+    ...> %Index{index: "test", source: %{"test" => "test"}},
+    ...> %Index{index: "test", source: %{"test" => "test"}},
+    ...> %Index{index: "test", source: %{"test" => "test"}}
+    ...> ]
     ...> |> ElasticsearchElixirBulkProcessor.Helpers.Events.split_first_bytes(0)
-    {[], ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}
+    alias ElasticsearchElixirBulkProcessor.Items.Index
+    {
+      [],
+      [%Index{index: "test", source: %{"test" => "test"}}, %Index{index: "test", source: %{"test" => "test"}}, %Index{index: "test", source: %{"test" => "test"}}]
+    }
 
   """
   def split_first_bytes(list, first_byte_size) do
@@ -45,8 +85,8 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.Events do
     )
   end
 
-  defp build_up_first_chunk_elements(element, {first, rest}, first_byte_size)
-       when is_binary(element) do
+  defp build_up_first_chunk_elements(element = %struct{}, {first, rest}, first_byte_size)
+       when struct in [Create, Index, Update, Delete] do
     if first |> byte_sum >= first_byte_size do
       {first, rest ++ [element]}
     else
@@ -60,13 +100,23 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.Events do
 
   ## Examples
 
-    iex> ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    ...> |> ElasticsearchElixirBulkProcessor.Helpers.Events.chunk_bytes(3)
-    [["0", "1", "2"], ["3", "4", "5"], ["6", "7", "8"], ["9"]]
+    iex> alias ElasticsearchElixirBulkProcessor.Items.Index
+    ...> [
+    ...> %Index{index: "test", source: %{"test" => "test"}},
+    ...> %Index{index: "test", source: %{"test" => "test"}}
+    ...> ]
+    ...> |> ElasticsearchElixirBulkProcessor.Helpers.Events.chunk_bytes(10)
+    alias ElasticsearchElixirBulkProcessor.Items.Index
+    [[%Index{index: "test", source: %{"test" => "test"}}], [%Index{index: "test", source: %{"test" => "test"}}]]
 
-    iex> ["00", "11", "22", "33", "44"]
-    ...> |> ElasticsearchElixirBulkProcessor.Helpers.Events.chunk_bytes(3)
-    [["00", "11"], ["22", "33"], ["44"]]
+    iex> alias ElasticsearchElixirBulkProcessor.Items.Index
+    ...> [
+    ...> %Index{index: "test", source: %{"test" => "test"}},
+    ...> %Index{index: "test", source: %{"test" => "test"}}
+    ...> ]
+    ...> |> ElasticsearchElixirBulkProcessor.Helpers.Events.chunk_bytes(10)
+    alias ElasticsearchElixirBulkProcessor.Items.Index
+    [[%Index{index: "test", source: %{"test" => "test"}}], [%Index{index: "test", source: %{"test" => "test"}}]]
 
   """
   def chunk_bytes(list, chunk_byte_size) do
@@ -78,8 +128,15 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.Events do
     |> Enum.reverse()
   end
 
-  defp build_up_chunk_elements(element, [head | tail], chunk_byte_size) when is_binary(element) do
-    if head |> byte_sum >= chunk_byte_size do
+  defp build_up_chunk_elements(
+         element = %struct{},
+         [head | tail],
+         chunk_byte_size
+       )
+       when is_list(head) and struct in [Create, Index, Update, Delete] do
+    current_byte_size = byte_sum(head)
+
+    if current_byte_size >= chunk_byte_size do
       [[element] | [head | tail]]
     else
       [head ++ [element] | tail]
