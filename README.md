@@ -61,7 +61,7 @@ Can be configurate via the `ELASTICSEARCH_URL` environment variable, defaults to
 ```elixir
 config :elasticsearch_elixir_bulk_processor,
        ElasticsearchElixirBulkProcessor.ElasticsearchCluster,
-       url: {:syste, "ELASTICSEARCH_URL"},
+       url: {:system, "ELASTICSEARCH_URL"},
        api: Elasticsearch.API.HTTP
 ```
 
