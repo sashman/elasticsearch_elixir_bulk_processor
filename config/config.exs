@@ -51,4 +51,4 @@ config :elasticsearch_elixir_bulk_processor,
          recv_timeout: 15_000
        ]
 
-#     import_config "#{Mix.env()}.exs"
+import_config "#{Mix.env()}.exs"
