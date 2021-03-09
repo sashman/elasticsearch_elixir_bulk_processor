@@ -12,8 +12,6 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Payload do
         |> Stream.map(& &1.__struct__.to_payload(&1))
         |> Enum.join("\n")
 
-      Logger.debug(payload)
-
       send_payload(payload, state.success_function, state.error_function)
     end)
   end

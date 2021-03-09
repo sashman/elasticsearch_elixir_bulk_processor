@@ -51,7 +51,7 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.ClientTest do
         end do
         with_mock FunctionStub2, error_fun: fn _ -> :ok end do
           Client.bulk_upload(
-            "one\ntwo\nthree",
+            "meta_one\none\nmeta_two\ntwo\nmeta_three\nthree",
             & &1,
             &FunctionStub2.error_fun/1
           )
@@ -60,7 +60,7 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.ClientTest do
 
           assert_called(
             FunctionStub2.error_fun(%{
-              data: "one\ntwo\nthree",
+              data: "meta_one\none\nmeta_two\ntwo\nmeta_three\nthree",
               error: {:error, @es_res}
             })
           )
@@ -88,12 +88,12 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.ClientTest do
     test "calls error function with reduced data when there is multiple errors with some successes" do
       with_mock Elasticsearch,
         post: fn
-          _, _, "one\nthree\n" -> {:ok, @reduced_es_res}
+          _, _, "meta_one\none\nmeta_three\nthree\n" -> {:ok, @reduced_es_res}
           _, _, _ -> {:ok, @nes_res}
         end do
         with_mock FunctionStub3, error_fun: fn _ -> :ok end do
           Client.bulk_upload(
-            "one\ntwo\nthree",
+            "meta_one\none\nmeta_two\ntwo\nmeta_three\nthree",
             & &1,
             &FunctionStub3.error_fun/1
           )
@@ -102,7 +102,7 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.ClientTest do
 
           assert_called(
             FunctionStub3.error_fun(%{
-              data: "one\nthree",
+              data: "meta_one\none\nmeta_three\nthree",
               error: {:error, @reduced_es_res}
             })
           )

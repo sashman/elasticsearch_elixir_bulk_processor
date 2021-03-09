@@ -31,25 +31,27 @@ defmodule ElasticsearchElixirBulkProcessor.Helpers.BulkResponse do
 
   @doc ~S"""
 
-  Given a list of items from a bulk response and the data sent as a string payload return the items that match the error.
+  Given a list of items from a bulk response and the data sent as a string payload return the items that match the error. Incoming data is split every second new line.
 
   ## Examples
 
     iex> items = [%{"index" => %{}}, %{"update" => %{"error" => %{}}}, %{"create" => %{}}, %{"delete" => %{}}]
-    ...> data = "item\nitem_with_errors\nitem\nitem"
+    ...> data = "meta\nitem\nmeta_with_errors\nitem_with_errors\nmeta\nitem\nmeta\nitem"
     ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.gather_error_items(items, data)
-    "item_with_errors"
+    "meta_with_errors\nitem_with_errors"
 
     iex> items = [%{"index" => %{"error" => %{}}}, %{"update" => %{"error" => %{}}}, %{"create" => %{"error" => %{}}}, %{"delete" => %{"error" => %{}}}]
-    ...> data = "item1\nitem2\nitem3\nitem4"
+    ...> data = "meta\nitem1\nmeta\nitem2\nmeta\nitem3\nmeta\nitem4"
     ...> ElasticsearchElixirBulkProcessor.Helpers.BulkResponse.gather_error_items(items, data)
-    "item1\nitem2\nitem3\nitem4"
+    "meta\nitem1\nmeta\nitem2\nmeta\nitem3\nmeta\nitem4"
 
   """
   def gather_error_items(items, data) when is_binary(data) do
     data_list =
       data
       |> String.split("\n")
+      |> Stream.chunk_every(2)
+      |> Enum.map(&Enum.join(&1, "\n"))
 
     gather_error_items(items, data_list)
     |> Enum.join("\n")
