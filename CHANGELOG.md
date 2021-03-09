@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.4
+
+
 ## 0.1.3
 * Fixing potential payload corruption by splitting based on the items rather than the serialised payload
 
