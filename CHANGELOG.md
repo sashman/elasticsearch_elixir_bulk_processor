@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.5
+* Fixing partial error retries
+
 ## 0.1.4
 
 
