@@ -2,13 +2,19 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Payload do
   alias ElasticsearchElixirBulkProcessor.Bulk.{QueueStage, Client}
   alias ElasticsearchElixirBulkProcessor.Helpers.Events
 
+  require Logger
+
   def send(events, state) do
     events
     |> manage_payload(state, fn to_send ->
-      to_send
-      |> Stream.map(& &1.__struct__.to_payload(&1))
-      |> Enum.join("\n")
-      |> send_payload(state.success_function, state.error_function)
+      payload =
+        to_send
+        |> Stream.map(& &1.__struct__.to_payload(&1))
+        |> Enum.join("\n")
+
+      Logger.debug(payload)
+
+      send_payload(payload, state.success_function, state.error_function)
     end)
   end
 
