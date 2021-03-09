@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.3
+* Fixing potential payload currption by splitting based on the items rather than the serialised payload
+
 ## 0.1.2
 
 
