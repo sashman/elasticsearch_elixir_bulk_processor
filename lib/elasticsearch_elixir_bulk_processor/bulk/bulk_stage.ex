@@ -66,7 +66,27 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.BulkStage do
       do: {:noreply, [], state |> Map.put(setting_name, value)}
 
   def handle_events(events, _from, state) when is_list(events) and length(events) > 0 do
+    start_time = System.monotonic_time()
+
+    :telemetry.execute(
+      [:elasticsearch_elixir_bulk_processor, :bulk_stage, :start],
+      %{time: start_time},
+      %{events: events}
+    )
+
     Payload.send(events, state)
+
+    end_time = System.monotonic_time()
+
+    :telemetry.execute(
+      [:elasticsearch_elixir_bulk_processor, :bulk_stage, :stop],
+      %{
+        time: end_time,
+        duration: end_time - start_time
+      },
+      %{events: events}
+    )
+
     {:noreply, [], state}
   end
 end

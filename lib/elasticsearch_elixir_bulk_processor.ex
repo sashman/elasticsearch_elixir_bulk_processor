@@ -85,6 +85,11 @@ defmodule ElasticsearchElixirBulkProcessor do
   """
   @spec send_requests(list(ElasticsearchElixirBulkProcessor.Items.Item.t())) :: :ok
   def send_requests(bulk_items) when is_list(bulk_items) do
+    :telemetry.execute(
+      [:elasticsearch_elixir_bulk_processor, :send_requests],
+      %{bulk_items: bulk_items}
+    )
+
     Upload.add_requests(bulk_items)
   end
 

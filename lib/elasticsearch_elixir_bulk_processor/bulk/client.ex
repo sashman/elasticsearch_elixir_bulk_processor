@@ -22,21 +22,55 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
   end
 
   defp handle_success(
-         {:ok, %{"errors" => true, "items" => items}},
+         {:ok, %{"errors" => true, "items" => items} = response},
          success_fun,
          error_fun,
          data,
          retry_data_count
        )
        when is_function(error_fun) do
+    :telemetry.execute(
+      [:elasticsearch_elixir_bulk_processor, :client, :response_success],
+      %{
+        time: System.monotonic_time(),
+        response: response
+      }
+    )
+
     BulkResponse.all_items_error?(items)
     |> handle_multiple(items, success_fun, error_fun, data, retry_data_count)
   end
 
-  defp handle_success({:ok, _} = res, success_fun, _, _, _), do: success_fun.(res)
+  defp handle_success({:ok, response} = res, success_fun, _, _, _) do
+    :telemetry.execute(
+      [:elasticsearch_elixir_bulk_processor, :client, :response_success],
+      %{
+        time: System.monotonic_time(),
+        response: response
+      }
+    )
 
-  defp handle_error(error, error_fun, data),
-    do: error_fun.(%{error: error, data: data})
+    success_fun.(res)
+  end
+
+  defp handle_error(error, error_fun, data) do
+    :telemetry.execute(
+      [:elasticsearch_elixir_bulk_processor, :client, :response_error],
+      %{
+        time: System.monotonic_time(),
+        error: error
+      },
+      %{
+        data: data,
+        errored_item_count: errored_item_count(error)
+      }
+    )
+
+    error_fun.(%{error: error, data: data})
+  end
+
+  defp errored_item_count({_, %{"items" => items}}), do: length(items)
+  defp errored_item_count(_), do: 0
 
   defp handle_multiple(_, _, _, error_fun, data, 3 = max_retry_count),
     do:
@@ -83,8 +117,27 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
 
   def convert_multiple_to_error(response), do: response
 
-  defp send_data(data),
-    do:
+  defp send_data(data) do
+    start_time = System.monotonic_time()
+
+    :telemetry.execute(
+      [:elasticsearch_elixir_bulk_processor, :client, :elasticsearch_post, :start],
+      %{time: start_time},
+      %{data: data}
+    )
+
+    result =
       ElasticsearchElixirBulkProcessor.ElasticsearchCluster
       |> Elasticsearch.post("/_bulk", data)
+
+    end_time = System.monotonic_time()
+
+    :telemetry.execute(
+      [:elasticsearch_elixir_bulk_processor, :client, :elasticsearch_post, :stop],
+      %{time: end_time, duration: end_time - start_time},
+      %{data: data}
+    )
+
+    result
+  end
 end
