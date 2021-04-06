@@ -32,6 +32,12 @@ ElasticsearchElixirBulkProcessor.send_requests(list_of_items)
 To send a list of request items to Elasticsearch. This mechanism uses GenStages for back pressure.
 NOTE: It should be completely reasonable to use this function by passing single element lists, the mechanism aggregates the items together prior to sending them.
 
+If you wish to bypass the GenStage mechanism and send the data synchronously you can use:
+
+```elixir
+ElasticsearchElixirBulkProcessor.Bulk.DirectUpload.add_requests(list_of_items)
+```
+
 The list elements must be [structs](https://github.com/sashman/elasticsearch_elixir_bulk_processor/tree/master/lib/elasticsearch_elixir_bulk_processor/items):
 
 - `ElasticsearchElixirBulkProcessor.Items.Index`
