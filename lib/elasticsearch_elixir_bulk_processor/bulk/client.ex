@@ -122,7 +122,7 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
 
     :telemetry.execute(
       [:elasticsearch_elixir_bulk_processor, :client, :elasticsearch_post, :start],
-      %{time: start_time},
+      %{time: start_time, bytes: byte_size(data)},
       %{data: data}
     )
 
@@ -134,7 +134,11 @@ defmodule ElasticsearchElixirBulkProcessor.Bulk.Client do
 
     :telemetry.execute(
       [:elasticsearch_elixir_bulk_processor, :client, :elasticsearch_post, :stop],
-      %{time: end_time, duration: end_time - start_time},
+      %{
+        time: end_time,
+        duration: end_time - start_time,
+        bytes: byte_size(data)
+      },
       %{data: data}
     )
 
