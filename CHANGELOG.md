@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.7
+
+
 ## 0.1.6
 * Adding telemetry events
 
